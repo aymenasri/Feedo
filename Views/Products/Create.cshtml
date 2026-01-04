@@ -1,0 +1,76 @@
+@model Feedo.Entities.Product
+@using Feedo.Shared
+
+@{
+    ViewData["Title"] = "Add New Product";
+    Layout = "~/Views/Shared/_PurpleLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">@ViewData["Title"]</h4>
+                <p class="card-description"> Create a new product entry </p>
+                <form class="forms-sample" asp-action="Create" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <div class="form-group">
+                        <label asp-for="Name">Product Name</label>
+                        <input asp-for="Name" class="form-control" placeholder="Enter product name" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Description">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter product description"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label asp-for="Price">Current Price (€)</label>
+                            <input asp-for="Price" type="number" step="0.01" class="form-control" placeholder="0.00" required />
+                            <small class="text-muted">This is the price customers will pay</small>
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label asp-for="DiscountPercentage">Discount (%)</label>
+                            <input asp-for="DiscountPercentage" type="number" step="0.01" min="0" max="100" class="form-control" placeholder="0" />
+                            <small class="text-muted">Leave empty for no discount</small>
+                            <span asp-validation-for="DiscountPercentage" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info" role="alert">
+                        <i class="mdi mdi-information"></i>
+                        <strong>Pricing Example:</strong> If you set Current Price to €80 and Discount to 20%, 
+                        customers will see: <del>€100</del> <strong>€80</strong> <span class="badge bg-danger">-20%</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Main Image</label>
+                        <input type="file" name="imageFile" class="form-control" accept="image/*">
+                        <small class="form-text text-muted">Select an image file (JPG, PNG, etc.)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="DisplayLocation">Display Location</label>
+                        <select asp-for="DisplayLocation" class="form-control" asp-items="Html.GetEnumSelectList<ProductDisplayLocation>()"></select>
+                        <span asp-validation-for="DisplayLocation" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-check form-check-flat form-check-primary">
+                        <label class="form-check-label">
+                            <input type="checkbox" asp-for="IsAvailable" class="form-check-input" checked> Is Available
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-gradient-primary me-2" onclick="console.log('Button clicked!');">Submit</button>
+                    <a asp-action="Index" class="btn btn-light">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

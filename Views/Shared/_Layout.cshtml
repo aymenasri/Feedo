@@ -1,0 +1,285 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Feedo</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Feedo.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Google Fonts for Premium UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Template Header Styles */
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .template-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background-color: #0a0a0a;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .header-logo img {
+            height: 50px;
+            width: auto;
+        }
+
+        .header-nav {
+            display: flex;
+            align-items: center;
+            background-color: #1a1a1a;
+            padding: 0.5rem 1.5rem;
+            border-radius: 9999px;
+            gap: 0.5rem;
+        }
+
+        .header-nav a {
+            padding: 0.5rem 1rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 20px;
+        }
+
+        .header-nav a:hover {
+            color: #dc2626;
+            background-color: rgba(220, 38, 38, 0.1);
+        }
+
+        .header-nav a.active {
+            color: #dc2626;
+        }
+
+        .btn-login {
+            background-color: #222;
+            color: white;
+            border-radius: 9999px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-login:hover {
+            background-color: #dc2626;
+            transform: scale(1.05);
+            color: white;
+        }
+
+        .user-dropdown {
+            position: relative;
+        }
+
+        .user-dropdown-toggle {
+            background-color: #222;
+            color: white;
+            border-radius: 9999px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .user-dropdown-toggle:hover {
+            background-color: #333;
+            transform: scale(1.05);
+        }
+
+        .user-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background-color: #222;
+            border-radius: 1rem;
+            padding: 0.5rem;
+            min-width: 200px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+        }
+
+        .user-dropdown-menu.show {
+            display: block;
+        }
+
+        .user-dropdown-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: white;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .user-dropdown-menu a:hover {
+            background-color: #333;
+            color: #dc2626;
+        }
+
+        .user-dropdown-menu form button {
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: 0.75rem 1rem;
+            color: white;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .user-dropdown-menu form button:hover {
+            background-color: #333;
+            color: #dc2626;
+        }
+
+        @@media (max-width: 768px) {
+            .header-nav {
+                display: none;
+            }
+
+            .template-header {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="template-header container-fluid interactive-element">
+        <a href="@Url.Action("Index", "Home")" class="header-logo interactive-element">
+            <img src="~/images/feedo-logo.png" alt="Feedo" />
+        </a>
+
+        <nav class="header-nav">
+            <a href="@Url.Action("Index", "Home")" class="interactive-element">Accueil</a>
+            <a href="@Url.Action("Catalog", "Home")" class="interactive-element">Menu</a>
+            <a href="#" class="interactive-element">À Propos</a>
+            <a href="#" class="interactive-element">Nos Services</a>
+            <a href="#" class="interactive-element">Contact</a>
+        </nav>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="user-dropdown">
+                <button class="user-dropdown-toggle interactive-element" id="userDropdownToggle">
+                    <i class="fas fa-user"></i>
+                    @User.Identity.Name
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="@Url.Action("Index", "Dashboard")">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard Admin
+                        </a>
+                        <a href="@Url.Action("Index", "Clients")">
+                            <i class="fas fa-users"></i> Gestion Clients
+                        </a>
+                        <a href="@Url.Action("Index", "Products")">
+                            <i class="fas fa-box"></i> Produits
+                        </a>
+                    }
+                    <form method="post" asp-controller="Account" asp-action="Logout">
+                        <button type="submit">
+                            <i class="fas fa-sign-out-alt"></i> Déconnexion
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <a href="@Url.Action("Login", "Account")" class="btn-login interactive-element">
+                Login <i class="fas fa-sign-in-alt"></i>
+            </a>
+        }
+    </header>
+
+    <script>
+        // User dropdown toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggle = document.getElementById('userDropdownToggle');
+            const dropdownMenu = document.getElementById('userDropdownMenu');
+
+            if (dropdownToggle && dropdownMenu) {
+                dropdownToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    dropdownMenu.classList.toggle('show');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function() {
+                    dropdownMenu.classList.remove('show');
+                });
+            }
+        });
+    </script>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer class="footer text-center">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 - Feedo Delivery. Tous droits réservés.</p>
+            <p class="mb-0"><small>Plateforme de gestion de livraison de repas</small></p>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script>
+        // Custom dropdown toggle for user menu
+        document.addEventListener('DOMContentLoaded', function() {
+            const userDropdown = document.getElementById('userDropdown');
+            if (userDropdown) {
+                userDropdown.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const dropdownMenu = this.nextElementSibling;
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.toggle('show');
+                    }
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    const dropdown = document.querySelector('.dropdown-menu.show');
+                    if (dropdown && !e.target.closest('.dropdown')) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+            }
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

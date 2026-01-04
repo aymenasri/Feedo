@@ -1,0 +1,1221 @@
+﻿@model IEnumerable<Feedo.Entities.Product>
+@using Feedo.Shared
+
+@{
+    ViewData["Title"] = "Accueil";
+}
+
+<style>
+    /* Template-Based Custom Styles for Feedo */
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background-color: #111111;
+        color: #ffffff;
+    }
+
+    /* Custom Cursor */
+    .cursor {
+        position: fixed;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #dc2626;
+        border-radius: 50%;
+        left: 0;
+        top: 0;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        transition: width 0.2s, height 0.2s, background-color 0.2s;
+        z-index: 9999;
+    }
+
+    .cursor-grow {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(220, 38, 38, 0.3);
+    }
+
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+        color: white;
+        padding: 5rem 0;
+        margin: -1rem -15px 3rem -15px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section h1 {
+        font-size: 3.5rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-section p {
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+    }
+
+    /* Promo Hero Section - CTR Optimized Carousel */
+    .promo-hero-section {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        border-radius: 1.5rem;
+        border: 1px solid #2a2a2a;
+        position: relative;
+        overflow: hidden;
+        margin: 2rem auto 5rem auto;
+        max-width: 1200px;
+        padding: 3rem;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .carousel-container {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .carousel-track {
+        display: flex;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+    }
+
+    .carousel-slide {
+        min-width: 100%;
+        max-width: 100%;
+        flex-shrink: 0;
+        box-sizing: border-box;
+        padding: 0 1rem;
+    }
+
+    .rule-of-thirds-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 1.5rem;
+        align-items: center;
+        min-height: 500px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Glassmorphism Navigation Arrows */
+    .carousel-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        opacity: 0;
+        z-index: 100;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .promo-hero-section:hover .carousel-nav {
+        opacity: 1;
+    }
+
+    .carousel-nav:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .carousel-nav.disabled {
+        opacity: 0.3 !important;
+        cursor: not-allowed;
+    }
+
+    .carousel-nav.prev {
+        left: 1rem;
+    }
+
+    .carousel-nav.next {
+        right: 1rem;
+    }
+
+    /* Carousel Indicators */
+    .carousel-indicators {
+        position: absolute;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.5rem;
+        z-index: 10;
+    }
+
+    .carousel-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .carousel-indicator.active {
+        width: 24px;
+        border-radius: 4px;
+        background: #dc2626;
+    }
+
+    .hero-image-container {
+        position: relative;
+        border-radius: 0;
+        overflow: visible;
+        height: 550px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .promo-hero-image {
+        width: auto;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        filter: brightness(1.1) contrast(1.05);
+    }
+
+    .promo-hero-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 12px;
+        font-weight: 900;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(220, 38, 38, 0.6);
+        z-index: 10;
+        transform: rotate(-3deg);
+        border: 3px solid #fff;
+    }
+    
+    .discount-big {
+        font-size: 2.5rem;
+        line-height: 1;
+        font-weight: 900;
+        letter-spacing: -2px;
+    }
+    
+    .discount-text {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin-top: -5px;
+    }
+
+    .best-seller-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+        color: #000;
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-weight: 900;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4);
+        z-index: 10;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .hero-price-inline {
+        display: flex;
+        align-items: baseline;
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .hero-price-old {
+        color: #6b7280;
+        text-decoration: line-through;
+        font-size: 1.1rem;
+        font-weight: 500;
+        font-family: 'Montserrat', sans-serif;
+        opacity: 0.7;
+    }
+
+    .hero-price-new {
+        color: #dc2626;
+        font-weight: 900;
+        font-size: 3.5rem;
+        letter-spacing: -0.03em;
+        font-family: 'Montserrat', sans-serif;
+        text-shadow: 0 2px 10px rgba(220, 38, 38, 0.3);
+    }
+
+    .hero-text-container {
+        padding: 2rem;
+    }
+
+    .hero-text-container h1 {
+        font-size: 3.5rem;
+        line-height: 1;
+        margin-bottom: 1.5rem;
+        font-weight: 400;
+        font-family: 'Bebas Neue', sans-serif;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+
+    .hero-text-container p {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        color: #d1d5db;
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+    }
+
+    .hero-buttons {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .text-red {
+        color: #dc2626;
+    }
+
+    .text-light-gray {
+        color: #b3b3b3;
+    }
+
+    /* Buttons - CTR Optimized */
+    .btn-primary {
+        background-color: #1a1a1a;
+        color: white;
+        border-radius: 50px;
+        padding: 0.85rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 2px solid #2a2a2a;
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+    }
+
+    .btn-primary:hover {
+        background-color: #2a2a2a;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        color: white;
+    }
+
+    .btn-red {
+        background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+        color: white;
+        border-radius: 50px;
+        padding: 1rem 2.5rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        border: none;
+        font-family: 'Inter', sans-serif;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4);
+    }
+
+    .btn-red:hover {
+        background: linear-gradient(135deg, #b91c1c 0%, #c2410c 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(220, 38, 38, 0.6);
+        color: white;
+    }
+
+    /* High Contrast Black & Yellow Cards */
+    .black-card {
+        background: #1a1a1a;
+        border-radius: 25px;
+        border: 1px solid #333;
+        min-height: 350px;
+        transition: all 0.3s ease;
+    }
+
+    .black-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .yellow-card {
+        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+        border-radius: 25px;
+        border: 2px solid #dc2626;
+        min-height: 350px;
+        transition: all 0.3s ease;
+    }
+
+    .yellow-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 50px rgba(220, 38, 38, 0.5);
+    }
+
+    .text-yellow {
+        color: #fbbf24;
+    }
+
+    .text-light-gray {
+        color: #d1d5db;
+    }
+
+    .display-1 {
+        font-size: 5rem;
+        font-weight: 900;
+        font-family: 'Bebas Neue', sans-serif;
+        letter-spacing: -0.02em;
+    }
+
+    .display-4 {
+        font-size: 3rem;
+        font-weight: 900;
+        font-family: 'Bebas Neue', sans-serif;
+        line-height: 1;
+    }
+
+    .plus-icon {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: #000;
+        color: #fff;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        transition: transform 0.3s ease;
+    }
+
+    .yellow-card:hover .plus-icon {
+        transform: rotate(90deg);
+    }
+
+    .btn-promo-red {
+        background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
+        color: white;
+        border-radius: 50px;
+        padding: 0.85rem 1.5rem;
+        font-weight: 700;
+        border: none;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-promo-red:hover {
+        background: linear-gradient(135deg, #b91c1c 0%, #c2410c 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(220, 38, 38, 0.5);
+    }
+
+    .btn-promo-dark {
+        background: #2a2a2a;
+        color: white;
+        border-radius: 50px;
+        padding: 0.85rem 1.5rem;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-promo-dark:hover {
+        background: #3a3a3a;
+        transform: translateY(-2px);
+    }
+
+    .btn-promo-black {
+        background: #000;
+        color: #fff;
+        border-radius: 50px;
+        padding: 0.85rem 2rem;
+        font-weight: 700;
+        border: none;
+        transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-promo-black:hover {
+        background: #1a1a1a;
+        transform: scale(1.05);
+    }
+
+    .follow-link {
+        transition: all 0.3s ease;
+    }
+
+    .follow-link:hover {
+        transform: translateX(5px);
+    }
+
+    .follow-link i {
+        transition: transform 0.3s ease;
+    }
+
+    .follow-link:hover i {
+        transform: translateX(5px);
+    }
+
+    /* Promo Cards */
+    .promo-card {
+        background: #1a1a1a;
+        border-radius: 1.5rem;
+        border: 1px solid #333;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transform-style: preserve-3d;
+        overflow: hidden;
+    }
+
+    .promo-card:hover {
+        box-shadow: 0 20px 40px rgba(220, 38, 38, 0.3);
+    }
+
+    .promo-card-image {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    }
+
+    .promo-card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .promo-card-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1.2rem;
+        box-shadow: 0 5px 15px rgba(220, 38, 38, 0.5);
+    }
+
+    .promo-price-display {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .price-old {
+        color: #6b7280;
+        text-decoration: line-through;
+        font-size: 1rem;
+    }
+
+    .price-new {
+        color: #dc2626;
+        font-weight: bold;
+        font-size: 1.8rem;
+    }
+
+    /* Features Section */
+    .features-section {
+        padding: 3rem 0;
+    }
+
+    .feature-card {
+        background: #1a1a1a;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 1px solid #333;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(220, 38, 38, 0.3);
+        border-color: #dc2626;
+    }
+
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+    }
+
+    .feature-card h3 {
+        color: #dc2626;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+        color: #b3b3b3;
+        line-height: 1.6;
+    }
+
+    /* Responsive */
+    @@media (max-width: 992px) {
+        .promo-hero-section {
+            min-height: auto;
+            margin: 1.5rem auto 3rem auto;
+            padding: 2rem;
+        }
+
+        .rule-of-thirds-grid {
+            grid-template-columns: 1fr;
+            min-height: auto;
+        }
+
+        .hero-image-container {
+            height: 350px;
+            order: 1;
+        }
+
+        .hero-text-container {
+            order: 2;
+        }
+
+        .hero-price-container {
+            order: 3;
+        }
+
+        .hero-text-container h1 {
+            font-size: 2rem;
+        }
+
+        .hero-price-old {
+            font-size: 1.2rem;
+        }
+
+        .hero-price-new {
+            font-size: 2rem;
+        }
+
+        .promo-hero-badge {
+            font-size: 1.1rem;
+            padding: 8px 16px;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .promo-hero-section {
+            margin: 1rem;
+            padding: 1.5rem;
+        }
+
+        .hero-image-container {
+            height: 250px;
+        }
+
+        .hero-text-container h1 {
+            font-size: 1.75rem;
+        }
+
+        .hero-text-container p {
+            font-size: 0.9rem;
+        }
+
+        .hero-buttons {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .hero-buttons button {
+            width: 100%;
+        }
+
+        .promo-card-image {
+            height: 200px;
+        }
+
+        .promo-hero-badge {
+            font-size: 1rem;
+            padding: 6px 12px;
+            top: 10px;
+            right: 10px;
+        }
+
+        .hero-price-container {
+            padding: 1rem;
+        }
+
+        .hero-price-old {
+            font-size: 1rem;
+        }
+
+        .hero-price-new {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // --- Custom Cursor ---
+            const cursor = document.querySelector('.cursor');
+            const interactiveElements = document.querySelectorAll('.interactive-element');
+
+            if (cursor) {
+                window.addEventListener('mousemove', e => {
+                    gsap.to(cursor, { duration: 0.3, x: e.clientX, y: e.clientY, ease: 'power3.out' });
+                });
+
+                interactiveElements.forEach(el => {
+                    el.addEventListener('mouseenter', () => cursor.classList.add('cursor-grow'));
+                    el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-grow'));
+                });
+            }
+
+            // --- Scroll Animations ---
+            gsap.utils.toArray('.animate-in').forEach(elem => {
+                gsap.fromTo(elem, 
+                    { autoAlpha: 0, y: 60, scale: 0.95 }, 
+                    {
+                        autoAlpha: 1, 
+                        y: 0,
+                        scale: 1,
+                        duration: 1,
+                        ease: 'power4.out',
+                        scrollTrigger: {
+                            trigger: elem,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    }
+                );
+            });
+
+            // --- Hero Parallax on Mouse Move ---
+            const hero = document.querySelector('.promo-hero-section');
+            if (hero) {
+                hero.addEventListener('mousemove', e => {
+                    const { clientX, clientY } = e;
+                    const { offsetWidth, offsetHeight } = hero;
+                    const xPos = (clientX / offsetWidth - 0.5) * 30;
+                    const yPos = (clientY / offsetHeight - 0.5) * 30;
+
+                    gsap.to('.hero-image-container', { duration: 1, x: -xPos, y: -yPos, ease: 'power3.out' });
+                    gsap.to('.hero-text-container', { duration: 1, x: xPos, y: yPos, ease: 'power3.out' });
+                });
+
+                hero.addEventListener('mouseleave', () => {
+                    gsap.to('.hero-image-container, .hero-text-container', { duration: 1, x: 0, y: 0, ease: 'elastic.out(1, 0.5)' });
+                });
+            }
+
+            // --- Interactive Card Tilt Effect ---
+            const cards = document.querySelectorAll('.interactive-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const { width, height } = rect;
+
+                    const rotateX = gsap.utils.mapRange(0, height, -10, 10)(y);
+                    const rotateY = gsap.utils.mapRange(0, width, 10, -10)(x);
+
+                    gsap.to(card, {
+                        duration: 0.7,
+                        rotationX: rotateX,
+                        rotationY: rotateY,
+                        transformPerspective: 1000,
+                        ease: 'power2.out'
+                    });
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    gsap.to(card, {
+        duration: 1,
+                        rotationX: 0,
+                        rotationY: 0,
+                        ease: 'elastic.out(1, 0.5)'
+                    });
+                });
+            });
+
+            // --- Flash Promos Carousel Navigation ---
+            const carouselTrack = document.getElementById('carouselTrack');
+            const prevButton = document.getElementById('prevSlide');
+            const nextButton = document.getElementById('nextSlide');
+            const indicatorsContainer = document.getElementById('carouselIndicators');
+            
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.carousel-slide');
+            const totalSlides = slides.length;
+
+            // Create indicators
+            for (let i = 0; i < totalSlides; i++) {
+                const indicator = document.createElement('div');
+                indicator.classList.add('carousel-indicator');
+                if (i === 0) indicator.classList.add('active');
+                indicator.addEventListener('click', () => goToSlide(i));
+                indicatorsContainer.appendChild(indicator);
+            }
+
+            const indicators = document.querySelectorAll('.carousel-indicator');
+
+            function updateCarousel() {
+                // Move carousel
+                const offset = -currentSlide * 100;
+                carouselTrack.style.transform = `translateX(${offset}%)`;
+
+                // Update indicators
+                indicators.forEach((ind, idx) => {
+                    ind.classList.toggle('active', idx === currentSlide);
+                });
+
+                // Update arrow states
+                prevButton.classList.toggle('disabled', currentSlide === 0);
+                nextButton.classList.toggle('disabled', currentSlide === totalSlides - 1);
+            }
+
+            function goToSlide(index) {
+                currentSlide = index;
+                updateCarousel();
+            }
+
+            function nextSlide() {
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    updateCarousel();
+                }
+            }
+
+            function prevSlide() {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    updateCarousel();
+                }
+            }
+
+            prevButton.addEventListener('click', prevSlide);
+            nextButton.addEventListener('click', nextSlide);
+
+            // Initialize carousel
+            updateCarousel();
+        });
+    </script>
+}
+
+
+<!-- Custom Cursor -->
+<div class="cursor"></div>
+
+<!-- Promo Hero Section - Flash Promos Carousel -->
+<section class="promo-hero-section">
+    <!-- Navigation Arrows -->
+    <button class="carousel-nav prev" id="prevSlide" aria-label="Previous">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+    <button class="carousel-nav next" id="nextSlide" aria-label="Next">
+        <i class="fas fa-chevron-right"></i>
+    </button>
+
+    <!-- Carousel Container -->
+    <!-- Dynamic Carousel Container -->
+    <div class="carousel-container">
+        <div class="carousel-track" id="carouselTrack">
+            
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <div class="carousel-slide">
+                        <div class="rule-of-thirds-grid">
+                            <div class="hero-image-container animate-in">
+                                <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)" 
+                                     alt="@item.Name" 
+                                     class="promo-hero-image">
+                                @if (item.DiscountPercentage.HasValue && item.DiscountPercentage.Value > 0)
+                                {
+                                    <div class="promo-hero-badge interactive-element">
+                                        <div class="discount-big">-@item.DiscountPercentage.Value.ToString("0")%</div>
+                                        <div class="discount-text">OFF</div>
+                                    </div>
+                                }
+                                <div class="best-seller-badge">★ Featured</div>
+                            </div>
+                            <div class="hero-text-container animate-in">
+                                <h1 class="mb-4">
+                                    @item.Name
+                                </h1>
+                                <p class="mb-4">
+                                    @item.Description
+                                </p>
+                                <div class="hero-price-inline">
+                                    @if (item.OldPrice.HasValue)
+                                    {
+                                        <span class="hero-price-old">€@item.OldPrice.Value.ToString("F2")</span>
+                                    }
+                                    <span class="hero-price-new">€@item.Price.ToString("F2")</span>
+                                </div>
+                                <div class="hero-buttons">
+                                    <button class="btn-primary interactive-element">Détail</button>
+                                    <button class="btn-red interactive-element">Commander</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                 <!-- Fallback slide if no products -->
+                 <div class="carousel-slide">
+                    <div class="rule-of-thirds-grid">
+                        <div class="hero-text-container animate-in text-center" style="grid-column: 1 / -1;">
+                            <h1>No Products Available</h1>
+                            <p>Please add products to see them featured here.</p>
+                        </div>
+                    </div>
+                 </div>
+            }
+
+        </div>
+    </div>
+
+
+    <!-- Carousel Indicators -->
+    <div class="carousel-indicators" id="carouselIndicators"></div>
+</section>
+
+<!-- High Contrast Black & Yellow Cards Section -->
+<section class="container mt-5 mb-5">
+    <div class="row g-4">
+        <!-- Card 1: Black with Yellow -->
+        <div class="col-md-6">
+            <div class="promo-card black-card p-5 animate-in interactive-card">
+                <h2 class="display-1 fw-black mb-4">
+                    <span class="text-yellow">PROMO</span> -50%
+                </h2>
+                <p class="mb-4 text-light-gray">
+                    Profitez de réductions exceptionnelles sur une sélection de nos meilleurs plats. 
+                    Découvrez des saveurs uniques à prix imbattables. Offre limitée!
+                </p>
+                <div class="d-flex gap-2">
+                    <button class="btn-promo-red flex-fill interactive-element">Commander</button>
+                    <button class="btn-promo-dark flex-fill interactive-element">Voir Menu</button>
+                    <button class="btn-promo-dark flex-fill interactive-element">Partager</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Red Recruitment -->
+        <div class="col-md-6">
+            <div class="promo-card yellow-card p-5 position-relative animate-in interactive-card">
+                <div class="plus-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h2 class="display-4 fw-black mb-4 text-white">
+                    REJOIN<br>L'ÉQUIPE
+                </h2>
+                <p class="mb-4 text-white" style="opacity: 0.9;">
+                    Deviens livreur partenaire Feedo. Maîtrise ton emploi du temps, gagne des revenus attractifs et rejoins une communauté dynamique. 
+                    Liberté totale, zéro contrainte !
+                </p>
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn-promo-black interactive-element">Postuler</button>
+                    <a href="#" class="fw-bold text-white text-decoration-none follow-link interactive-element">
+                        Découvrir les avantages <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Promo Cards Grid -->
+<section class="container mb-5">
+    <div class="row g-4">
+        <!-- Promo Card 1 - Burger -->
+        <div class="col-md-6 col-lg-4">
+            <div class="promo-card animate-in interactive-card">
+                <div class="promo-card-image">
+                    <img src="~/images/burger-promo.png" alt="Burger Deluxe">
+                    <div class="promo-card-badge">-30%</div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-red mb-2">Burger Deluxe</h3>
+                    <p class="text-light-gray mb-3">Burger juteux avec sauce spéciale maison</p>
+                    <div class="promo-price-display mb-3">
+                        <span class="price-old">€12.99</span>
+                        <span class="price-new">€8.99</span>
+                    </div>
+                    <button class="btn-red w-100 interactive-element">Commander</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promo Card 2 - Pizza -->
+        <div class="col-md-6 col-lg-4">
+            <div class="promo-card animate-in interactive-card">
+                <div class="promo-card-image">
+                    <img src="~/images/pizza-promo.png" alt="Pizza Royale">
+                    <div class="promo-card-badge">-25%</div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-red mb-2">Pizza Royale</h3>
+                    <p class="text-light-gray mb-3">Pizza 4 fromages fondants</p>
+                    <div class="promo-price-display mb-3">
+                        <span class="price-old">€15.99</span>
+                        <span class="price-new">€11.99</span>
+                    </div>
+                    <button class="btn-red w-100 interactive-element">Commander</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promo Card 3 - Pasta -->
+        <div class="col-md-6 col-lg-4">
+            <div class="promo-card animate-in interactive-card">
+                <div class="promo-card-image">
+                    <img src="~/images/pasta-promo.png" alt="Pasta Carbonara">
+                    <div class="promo-card-badge">-20%</div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-red mb-2">Pasta Carbonara</h3>
+                    <p class="text-light-gray mb-3">Pâtes crémeuses authentiques</p>
+                    <div class="promo-price-display mb-3">
+                        <span class="price-old">€10.99</span>
+                        <span class="price-new">€8.79</span>
+                    </div>
+                    <button class="btn-red w-100 interactive-element">Commander</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promo Card 4 - Sandwich -->
+        <div class="col-md-6 col-lg-4">
+            <div class="promo-card animate-in interactive-card">
+                <div class="promo-card-image">
+                    <img src="~/images/sandwich-promo.png" alt="Sandwich Gourmet">
+                    <div class="promo-card-badge">-35%</div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-red mb-2">Sandwich Gourmet</h3>
+                    <p class="text-light-gray mb-3">Sandwich club gourmand</p>
+                    <div class="promo-price-display mb-3">
+                        <span class="price-old">€9.99</span>
+                        <span class="price-new">€6.49</span>
+                    </div>
+                    <button class="btn-red w-100 interactive-element">Commander</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promo Card 5 - Tacos -->
+        <div class="col-md-6 col-lg-4">
+            <div class="promo-card animate-in interactive-card">
+                <div class="promo-card-image">
+                    <img src="~/images/tacos-promo.png" alt="Tacos Mexicain">
+                    <div class="promo-card-badge">-25%</div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-red mb-2">Tacos Mexicain</h3>
+                    <p class="text-light-gray mb-3">Tacos garnis à la viande épicée</p>
+                    <div class="promo-price-display mb-3">
+                        <span class="price-old">€11.99</span>
+                        <span class="price-new">€8.99</span>
+                    </div>
+                    <button class="btn-red w-100 interactive-element">Commander</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promo Card 6 - Sushi -->
+        <div class="col-md-6 col-lg-4">
+            <div class="promo-card animate-in interactive-card">
+                <div class="promo-card-image">
+                    <img src="~/images/sushi-promo.png" alt="Sushi Mix">
+                    <div class="promo-card-badge">-40%</div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-red mb-2">Sushi Mix</h3>
+                    <p class="text-light-gray mb-3">Assortiment de sushis frais</p>
+                    <div class="promo-price-display mb-3">
+                        <span class="price-old">€19.99</span>
+                        <span class="price-new">€11.99</span>
+                    </div>
+                    <button class="btn-red w-100 interactive-element">Commander</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promo Card 7 - Salad -->
+        <div class="col-md-6 col-lg-4">
+            <div class="promo-card animate-in interactive-card">
+                <div class="promo-card-image">
+                    <img src="~/images/salad-promo.png" alt="Salade Fraîcheur">
+                    <div class="promo-card-badge">-15%</div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-red mb-2">Salade Fraîcheur</h3>
+                    <p class="text-light-gray mb-3">Salade composée bio</p>
+                    <div class="promo-price-display mb-3">
+                        <span class="price-old">€8.99</span>
+                        <span class="price-new">€7.64</span>
+                    </div>
+                    <button class="btn-red w-100 interactive-element">Commander</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promo Card 8 - Dessert -->
+        <div class="col-md-6 col-lg-4">
+            <div class="promo-card animate-in interactive-card">
+                <div class="promo-card-image">
+                    <img src="~/images/dessert-promo.png" alt="Chocolat Délice">
+                    <div class="promo-card-badge">-30%</div>
+                </div>
+                <div class="p-4">
+                    <h3 class="text-red mb-2">Chocolat Délice</h3>
+                    <p class="text-light-gray mb-3">Fondant au chocolat gourmand</p>
+                    <div class="promo-price-display mb-3">
+                        <span class="price-old">€6.99</span>
+                        <span class="price-new">€4.89</span>
+                    </div>
+                    <button class="btn-red w-100 interactive-element">Commander</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<div class="container">
+    <section class="features-section">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 style="color: #dc2626; font-weight: bold;">Fonctionnalités Principales</h2>
+                <p style="color: #6b7280;">Tout ce dont vous avez besoin pour gérer votre activité</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        👥
+                    </div>
+                    <h3 class="text-center">Gestion des Clients</h3>
+                    <p class="text-center">
+                        Gérez facilement votre base de clients avec notre interface intuitive.
+                        Ajoutez, modifiez et supprimez des clients en quelques clics.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        🍕
+                    </div>
+                    <h3 class="text-center">Catalogue Produits</h3>
+                    <p class="text-center">
+                        Organisez votre menu avec des catégories, prix et descriptions détaillées.
+                        Mettez à jour votre catalogue en temps réel.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        📦
+                    </div>
+                    <h3 class="text-center">Suivi des Commandes</h3>
+                    <p class="text-center">
+                        Suivez l'état de vos commandes depuis la création jusqu'à la livraison.
+                        Système de notification en temps réel.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        📊
+                    </div>
+                    <h3 class="text-center">Statistiques</h3>
+                    <p class="text-center">
+                        Visualisez vos performances avec des tableaux de bord détaillés.
+                        Prenez de meilleures décisions basées sur les données.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        🚚
+                    </div>
+                    <h3 class="text-center">Gestion Livreurs</h3>
+                    <p class="text-center">
+                        Assignez les commandes aux livreurs disponibles.
+                        Optimisez vos itinéraires de livraison.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        💳
+                    </div>
+                    <h3 class="text-center">Paiements Sécurisés</h3>
+                    <p class="text-center">
+                        Acceptez les paiements en toute sécurité.
+                        Support multi-méthodes de paiement.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="text-center py-5">
+        <h2 style="color: #dc2626; font-weight: bold; margin-bottom: 1.5rem;">
+            Prêt à commencer ?
+        </h2>
+        <p class="lead mb-4" style="color: #6b7280;">
+            Découvrez toutes les fonctionnalités de Feedo dès maintenant
+        </p>
+        <a asp-controller="Clients" asp-action="Index" class="btn btn-lg" 
+           style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; padding: 1rem 3rem; border-radius: 50px; font-weight: 600;">
+            Commencer
+        </a>
+    </section>
+</div>

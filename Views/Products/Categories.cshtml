@@ -1,0 +1,106 @@
+@{
+    ViewData["Title"] = "Product Collections";
+    Layout = "~/Views/Shared/_PurpleLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title mb-4">📦 Product Collections</h4>
+                <p class="card-description">Manage your products by placement and marketing strategy</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- Home Carousel / Hero Promos -->
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card card-hover">
+            <div class="card-body text-center">
+                <div class="icon-wrapper mb-3">
+                    <i class="mdi mdi-bullhorn-outline text-danger" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="card-title">🔥 Hero Promotions</h5>
+                <p class="text-muted small">Featured products on homepage carousel</p>
+                <p class="badge bg-gradient-danger text-white mb-3">High Visibility</p>
+                <a asp-action="Index" asp-controller="Products" asp-route-location="HomeCarousel" class="btn btn-gradient-danger btn-sm">
+                    Manage Collection <i class="mdi mdi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Default / Catalog -->
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card card-hover">
+            <div class="card-body text-center">
+                <div class="icon-wrapper mb-3">
+                    <i class="mdi mdi-view-grid-outline text-primary" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="card-title">📋 Product Catalog</h5>
+                <p class="text-muted small">Standard products in main catalog</p>
+                <p class="badge bg-gradient-primary text-white mb-3">General</p>
+                <a asp-action="Index" asp-controller="Products" asp-route-location="Default" class="btn btn-gradient-primary btn-sm">
+                    Manage Collection <i class="mdi mdi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Products -->
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card card-hover">
+            <div class="card-body text-center">
+                <div class="icon-wrapper mb-3">
+                    <i class="mdi mdi-package-variant text-success" style="font-size: 3rem;"></i>
+                </div>
+                <h5 class="card-title">📊 All Products</h5>
+                <p class="text-muted small">View and manage entire inventory</p>
+                <p class="badge bg-gradient-success text-white mb-3">Complete View</p>
+                <a asp-action="Index" asp-controller="Products" class="btn btn-gradient-success btn-sm">
+                    View All <i class="mdi mdi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Quick Actions</h5>
+                <a asp-action="Create" asp-controller="Products" class="btn btn-gradient-primary">
+                    <i class="mdi mdi-plus-circle"></i> Add New Product
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-hover {
+        transition: all 0.3s ease;
+        border: 1px solid #eee;
+    }
+    
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        border-color: #dc2626;
+    }
+    
+    .icon-wrapper {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(220, 38, 38, 0.1);
+    }
+</style>

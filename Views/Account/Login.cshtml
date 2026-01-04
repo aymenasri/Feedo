@@ -1,0 +1,521 @@
+@model Feedo.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Connexion";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Feedo</title>
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --bg-round-a: #dc2626;
+            --bg-round-b: #991b1b;
+            --panel-color: #fff;
+            --title: #333;
+            --bg-input: #f3f4f6;
+            --input-icon: #dc2626;
+            --input: #333;
+            --input-hover: #222;
+            --btn-color: #dc2626;
+            --btn-text: #fff;
+            --btn-hover: #991b1b;
+            --social-text: #444;
+            --social-icon: #dc2626;
+            --icon-color: #dc2626;
+        }
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .auth-container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            overflow: hidden;
+        }
+
+        .auth-container:before {
+            content: "";
+            position: absolute;
+            width: 2000px;
+            height: 2000px;
+            border-radius: 50%;
+            background: linear-gradient(-45deg, var(--bg-round-a), var(--bg-round-b));
+            top: -10%;
+            right: 48%;
+            transform: translateY(-50%);
+            z-index: 6;
+            transition: 1.8s ease-in-out;
+        }
+
+        .forms-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .signin-signup {
+            position: absolute;
+            top: 50%;
+            left: 75%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            display: grid;
+            grid-template-columns: 1fr;
+            z-index: 5;
+            transition: 1s 0.7s ease-in-out;
+        }
+
+        form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 5rem;
+            overflow: hidden;
+            grid-column: 1 / 2;
+            grid-row: 1 / 2;
+            transition: 0.2s 0.7s ease-in-out;
+        }
+
+        form.sign-in-form {
+            z-index: 2;
+        }
+
+        form.sign-up-form {
+            z-index: 1;
+            opacity: 0;
+        }
+
+        .title {
+            font-size: 2.2rem;
+            color: var(--title);
+            margin-bottom: 10px;
+        }
+
+        .input-field {
+            width: 85%;
+            height: 55px;
+            background-color: var(--bg-input);
+            margin: 10px 0;
+            border-radius: 55px;
+            display: grid;
+            grid-template-columns: 15% 70% 15%;
+            padding: 0 0.4rem;
+            position: relative;
+        }
+
+        .input-field i {
+            text-align: center;
+            line-height: 55px;
+            color: var(--input-icon);
+            font-size: 1.1rem;
+        }
+
+        .input-field input {
+            background: none;
+            outline: none;
+            border: none;
+            line-height: 1;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--input);
+        }
+
+        .input-field input::placeholder {
+            color: var(--input-hover);
+            font-weight: 500;
+        }
+
+        #togglePassword, #toggleReg {
+            text-align: center;
+            color: var(--input-icon);
+            cursor: pointer;
+        }
+
+        .btn {
+            width: 150px;
+            height: 49px;
+            border: none;
+            outline: none;
+            border-radius: 49px;
+            cursor: pointer;
+            background-color: var(--btn-color);
+            color: var(--btn-text);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin: 10px 0;
+            transition: 0.5s;
+        }
+
+        .btn:hover {
+            background-color: var(--btn-hover);
+        }
+
+        .check {
+            margin: 12px 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .check input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .panels-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: space-around;
+            text-align: center;
+            z-index: 7;
+        }
+
+        .left-panel {
+            pointer-events: all;
+            padding: 3rem 17% 2rem 12%;
+        }
+
+        .right-panel {
+            pointer-events: none;
+            padding: 3rem 12% 2rem 17%;
+        }
+
+        .panel .content {
+            color: var(--panel-color);
+            transition: 0.9s 0.6s ease-in-out;
+        }
+
+        .panel h3 {
+            font-weight: 600;
+            line-height: 1;
+            font-size: 1.5rem;
+        }
+
+        .panel p {
+            font-size: 0.95rem;
+            padding: 0.7rem 0;
+        }
+
+        .btn.transparent {
+            margin: 0;
+            background: none;
+            border: 2px solid #fff;
+            width: 130px;
+            height: 41px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .right-panel .content {
+            transform: translateX(800px);
+        }
+
+        /* ANIMATION */
+        .auth-container.sign-up-mode:before {
+            transform: translate(100%, -50%);
+            right: 52%;
+        }
+
+        .auth-container.sign-up-mode .left-panel .content {
+            transform: translateX(-800px);
+        }
+
+        .auth-container.sign-up-mode .right-panel .content {
+            transform: translateX(0px);
+        }
+
+        .auth-container.sign-up-mode .left-panel {
+            pointer-events: none;
+        }
+
+        .auth-container.sign-up-mode .right-panel {
+            pointer-events: all;
+        }
+
+        .auth-container.sign-up-mode .signin-signup {
+            left: 25%;
+        }
+
+        .auth-container.sign-up-mode form.sign-in-form {
+            z-index: 1;
+            opacity: 0;
+        }
+
+        .auth-container.sign-up-mode form.sign-up-form {
+            z-index: 2;
+            opacity: 1;
+        }
+
+        .text-danger {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .validation-summary-errors {
+            background: #fee2e2;
+            border: 1px solid #dc2626;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            color: #991b1b;
+        }
+
+        /* RESPONSIVE */
+        @@media (max-width: 870px) {
+            .auth-container {
+                min-height: 800px;
+                height: 100vh;
+            }
+
+            .auth-container::before {
+                width: 1500px;
+                height: 1500px;
+                left: 30%;
+                bottom: 68%;
+                transform: translateX(-50%);
+                right: initial;
+                top: initial;
+                transition: 2s ease-in-out;
+            }
+
+            .signin-signup {
+                width: 100%;
+                left: 50%;
+                top: 95%;
+                transform: translate(-50%, -100%);
+                transition: 1s 0.8s ease-in-out;
+            }
+
+            .panels-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 2fr 1fr;
+            }
+
+            .panel {
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+                padding: 2.5rem 8%;
+            }
+
+            .left-panel {
+                grid-row: 1 / 2;
+            }
+
+            .right-panel {
+                grid-row: 3 / 4;
+            }
+
+            .right-panel .content {
+                transform: translateY(300px);
+            }
+
+            .auth-container.sign-up-mode:before {
+                transform: translate(-50%, 100%);
+                bottom: 32%;
+                right: initial;
+            }
+
+            .auth-container.sign-up-mode .left-panel .content {
+                transform: translateY(-300px);
+            }
+
+            .auth-container.sign-up-mode .signin-signup {
+                top: 5%;
+                transform: translate(-50%, 0);
+                left: 50%;
+            }
+        }
+
+        @@media (max-width: 570px) {
+            form {
+                padding: 0 1.5rem;
+            }
+
+            .panel .content {
+                padding: 0.5rem 1rem;
+            }
+
+            .auth-container:before {
+                bottom: 75%;
+                left: 50%;
+            }
+
+            .auth-container.sign-up-mode:before {
+                bottom: 24%;
+                left: 50%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-container" id="auth-container">
+        <div class="forms-container">
+            <div class="signin-signup">
+                <!-- LOGIN FORM -->
+                <form asp-controller="Account" asp-action="Login" method="post" class="sign-in-form">
+                    @Html.AntiForgeryToken()
+                    <h2 class="title">Connexion</h2>
+                    
+                    <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+                    
+                    <div class="input-field">
+                        <i class="fas fa-envelope"></i>
+                        <input asp-for="Email" type="email" placeholder="Email" autocomplete="username" />
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input asp-for="Password" type="password" placeholder="Mot de passe" id="id_password" autocomplete="current-password" />
+                        <i class="far fa-eye" id="togglePassword"></i>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+
+                    <label class="check">
+                        <input asp-for="RememberMe" type="checkbox" />
+                        Se souvenir de moi
+                    </label>
+
+                    <button type="submit" class="btn solid">Se connecter</button>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form asp-controller="Account" asp-action="Register" method="post" class="sign-up-form">
+                    @Html.AntiForgeryToken()
+                    <h2 class="title">Créer un compte</h2>
+                    
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="FirstName" placeholder="Prénom" autocomplete="given-name" required />
+                    </div>
+
+                    <div class="input-field">
+                        <i class="fas fa-user"></i>
+                        <input type="text" name="LastName" placeholder="Nom" autocomplete="family-name" required />
+                    </div>
+
+                    <div class="input-field">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="Email" placeholder="Email" autocomplete="email" required />
+                    </div>
+
+                    <div class="input-field">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" name="PhoneNumber" placeholder="Téléphone" autocomplete="tel" required />
+                    </div>
+
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="Password" placeholder="Mot de passe" id="id_reg" autocomplete="new-password" required minlength="6" />
+                        <i class="far fa-eye" id="toggleReg"></i>
+                    </div>
+
+                    <div class="input-field">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="ConfirmPassword" placeholder="Confirmer mot de passe" autocomplete="new-password" required />
+                    </div>
+
+                    <button type="submit" class="btn solid">Créer mon compte</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="panels-container">
+            <div class="panel left-panel">
+                <div class="content">
+                    <h3>Pas encore de compte?</h3>
+                    <p>Créez votre compte dès maintenant pour profiter de tous nos services</p>
+                    <button class="btn transparent" id="sign-up-btn">S'inscrire</button>
+                </div>
+            </div>
+
+            <div class="panel right-panel">
+                <div class="content">
+                    <h3>Déjà un compte?</h3>
+                    <p>Connectez-vous pour accéder à votre espace personnel</p>
+                    <button class="btn transparent" id="sign-in-btn">Connexion</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sign_in_btn = document.querySelector("#sign-in-btn");
+        const sign_up_btn = document.querySelector("#sign-up-btn");
+        const container = document.querySelector("#auth-container");
+
+        sign_up_btn.addEventListener("click", () => {
+            container.classList.add("sign-up-mode");
+        });
+
+        sign_in_btn.addEventListener("click", () => {
+            container.classList.remove("sign-up-mode");
+        });
+
+        const togglePassword = document.querySelector("#togglePassword");
+        const password = document.querySelector("#id_password");
+
+        if (togglePassword && password) {
+            togglePassword.addEventListener("click", function (e) {
+                const type = password.getAttribute("type") === "password" ? "text" : "password";
+                password.setAttribute("type", type);
+                this.classList.toggle("fa-eye-slash");
+            });
+        }
+
+        const toggleReg = document.querySelector("#toggleReg");
+        const pass = document.querySelector("#id_reg");
+
+        if (toggleReg && pass) {
+            toggleReg.addEventListener("click", function (e) {
+                const type = pass.getAttribute("type") === "password" ? "text" : "password";
+                pass.setAttribute("type", type);
+                this.classList.toggle("fa-eye-slash");
+            });
+        }
+
+        // Check if we should start in register mode
+        @if (ViewData["ShowRegister"] != null && (bool)ViewData["ShowRegister"])
+        {
+            <text>container.classList.add("sign-up-mode");</text>
+        }
+    </script>
+    
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
+</body>
+</html>

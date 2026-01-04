@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Feedo.Entities.Client>
+
+@{
+    ViewData["Title"] = "Liste des Clients";
+}
+
+<h1>Gestion des Clients</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Ajouter un Client</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Téléphone</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Nom</td>
+                    <td>@item.Prenom</td>
+                    <td>@item.NumeroTelephone</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Modifier</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">Aucun client trouvé.</td>
+            </tr>
+        }
+    </tbody>
+</table>
