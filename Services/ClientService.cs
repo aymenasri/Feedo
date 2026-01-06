@@ -10,10 +10,13 @@ namespace Feedo.Services
     public class ClientService : IClientService
     {
         private readonly IClientRepository _clientRepository;
+        private readonly IUtilisateurRepository _utilisateurRepository;
+        private readonly Data.ApplicationDbContext _context;
 
-        public ClientService(IClientRepository clientRepository)
+        public ClientService(IClientRepository clientRepository, IUtilisateurRepository utilisateurRepository, Data.ApplicationDbContext context)
         {
             _clientRepository = clientRepository;
+            _context = context;
         }
 
         public async Task<IEnumerable<Client>> GetAllClientsAsync()
@@ -40,6 +43,8 @@ namespace Feedo.Services
 
             return client;
         }
+
+    
 
         public async Task<Client> CreateClientAsync(Client client)
         {
@@ -91,7 +96,35 @@ namespace Feedo.Services
             }
 
             // Delegate to repository
+            
+            // 1. Delete associated Orders (Cascade Delete manually)
+            var clientOrders = _context.Orders.Where(o => o.ClientId == id);
+            _context.Orders.RemoveRange(clientOrders);
+            await _context.SaveChangesAsync();
+
+            // 2. Delete the associated Utilisateur account to prevent orphan login
+            if (!string.IsNullOrEmpty(client.Email))
+            {
+                var user = await _utilisateurRepository.GetByEmailAsync(client.Email);
+                if (user != null)
+                {
+                    await _utilisateurRepository.DeleteAsync(user.Id);
+                }
+            }
+
+            // 3. Delete the Client record
             await _clientRepository.DeleteAsync(id);
+        }
+
+        public async Task DeleteUserByEmailAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email)) return;
+
+            var user = await _utilisateurRepository.GetByEmailAsync(email);
+            if (user != null)
+            {
+                await _utilisateurRepository.DeleteAsync(user.Id);
+            }
         }
     }
 }

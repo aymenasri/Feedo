@@ -38,9 +38,10 @@ namespace Feedo.Entities
     public enum OrderStatus
     {
         Pending = 0,        // En attente d'affectation de livreur
-        Assigned = 1,       // Affecté à un livreur
-        InProgress = 2,     // En cours de livraison
-        Delivered = 3,      // Livré
-        Cancelled = 4       // Annulé
+        Confirmed = 1,      // Confirmée, prête pour livraison
+        Assigned = 2,       // Affecté à un livreur
+        InDelivery = 3,     // En cours de livraison
+        Delivered = 4,      // Livré
+        Cancelled = 5       // Annulé
     }
 }

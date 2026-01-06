@@ -1,0 +1,482 @@
+@{
+    ViewData["Title"] = "Espace Livreur";
+    Layout = "_DeliveryLayout";
+    var livreur = ViewBag.Livreur as Feedo.Entities.Livreur;
+    var availableOrders = ViewBag.AvailableOrders as List<Feedo.Entities.Order>;
+    var myDeliveries = ViewBag.MyDeliveries as List<Feedo.Entities.Order>;
+}
+
+<style>
+    .delivery-container {
+        padding: 20px;
+    }
+
+    .status-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 30px;
+        color: white;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .status-toggle {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid white;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .status-toggle:hover {
+        background: white;
+        color: #667eea;
+    }
+
+    .status-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+    .status-available {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        border: 2px solid #10b981;
+    }
+
+    .status-busy {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border: 2px solid #ef4444;
+    }
+
+    .status-offline {
+        background: rgba(107, 114, 128, 0.2);
+        color: #9ca3af;
+        border: 2px solid #9ca3af;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+    }
+
+    .order-card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .btn-accept {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-accept:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-complete {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-complete:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-reject {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-reject:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+    }
+
+    .gap-2 {
+        gap: 0.5rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #1f2937;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #6b7280;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.3;
+    }
+
+    /* Custom Toast Notification */
+    .custom-toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: rgba(16, 185, 129, 0.95);
+        color: white;
+        padding: 20px 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        z-index: 10000;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .custom-toast.show {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    .toast-icon {
+        font-size: 1.5rem;
+        background: rgba(255,255,255,0.2);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .toast-content h6 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .toast-content p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+</style>
+
+<!-- Custom Toast Container -->
+<div id="customToast" class="custom-toast">
+    <div class="toast-icon">
+        <i class="mdi mdi-check"></i>
+    </div>
+    <div class="toast-content">
+        <h6>Succès !</h6>
+        <p id="toastMessage">Action effectuée avec succès.</p>
+    </div>
+</div>
+
+<div class="delivery-container">
+    <!-- Status Card -->
+    <div class="status-card">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-2">Bienvenue, @livreur?.Prenom @livreur?.Nom</h2>
+                <p class="mb-0">
+                    Statut actuel: 
+                    <span class="status-badge @(livreur?.Status == Feedo.Shared.LivreurStatus.Available ? "status-available" : 
+                                                 livreur?.Status == Feedo.Shared.LivreurStatus.Busy ? "status-busy" : "status-offline")" id="statusBadge">
+                        @livreur?.Status
+                    </span>
+                </p>
+            </div>
+            <div class="text-end">
+                <div class="mb-3">
+                    <i class="mdi mdi-star text-warning"></i> <strong>@livreur?.Rating.ToString("F1")</strong>
+                    <br>
+                    <small>@livreur?.TotalDeliveries livraisons</small>
+                </div>
+                @if (livreur?.Status != Feedo.Shared.LivreurStatus.Busy)
+                {
+                    <button class="status-toggle" onclick="toggleAvailability()">
+                        <i class="mdi mdi-power"></i> 
+                        @(livreur?.Status == Feedo.Shared.LivreurStatus.Available ? "Passer Hors Ligne" : "Passer Disponible")
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- My Current Deliveries -->
+    @if (myDeliveries != null && myDeliveries.Any())
+    {
+        <div class="mb-5">
+            <h3 class="section-title"><i class="mdi mdi-truck-fast text-primary"></i> Mes Livraisons en Cours</h3>
+            <div class="row">
+                @foreach (var order in myDeliveries)
+                {
+                    <div class="col-md-6">
+                        <div class="order-card">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <h5 class="mb-1">Commande #@order.Id</h5>
+                                    <small class="text-muted">@order.CreationA.ToString("dd/MM/yyyy HH:mm")</small>
+                                </div>
+                                <div class="text-end">
+                                    <h5 class="text-primary mb-0">@order.TotalAmount.ToString("C")</h5>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <p class="mb-1"><i class="mdi mdi-account"></i> <strong>Client:</strong> @order.Client?.Prenom @order.Client?.Nom</p>
+                                <p class="mb-1"><i class="mdi mdi-map-marker"></i> <strong>Adresse:</strong> @order.DeliveryAddress</p>
+                                @if (!string.IsNullOrEmpty(order.DeliveryNotes))
+                                {
+                                    <p class="mb-1"><i class="mdi mdi-note-text"></i> <strong>Notes:</strong> @order.DeliveryNotes</p>
+                                }
+                                <hr/>
+                                <p class="mb-2"><strong><i class="mdi mdi-cart"></i> Produits commandés:</strong></p>
+                                @if (order.OrderItems != null && order.OrderItems.Any())
+                                {
+                                    <ul class="list-unstyled ms-3">
+                                        @foreach (var item in order.OrderItems)
+                                        {
+                                            <li class="mb-1">
+                                                <small>• @item.Product?.Name x @item.Quantity - @item.Subtotal.ToString("C")</small>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                            <button class="btn-complete w-100" onclick="completeDelivery(@order.Id)">
+                                <i class="mdi mdi-check-circle"></i> Marquer comme Livrée
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Available Orders -->
+    <div>
+        <h3 class="section-title"><i class="mdi mdi-clipboard-list text-success"></i> Commandes Disponibles</h3>
+        @if (availableOrders != null && availableOrders.Any())
+        {
+            <div class="row">
+                @foreach (var order in availableOrders)
+                {
+                    <div class="col-md-6">
+                        <div class="order-card">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <h5 class="mb-1">Commande #@order.Id</h5>
+                                    <small class="text-muted">@order.CreationA.ToString("dd/MM/yyyy HH:mm")</small>
+                                </div>
+                                <div class="text-end">
+                                    <h5 class="text-success mb-0">@order.TotalAmount.ToString("C")</h5>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <p class="mb-1"><i class="mdi mdi-account"></i> <strong>Client:</strong> @order.Client?.Prenom @order.Client?.Nom</p>
+                                <p class="mb-1"><i class="mdi mdi-map-marker"></i> <strong>Adresse:</strong> @order.DeliveryAddress</p>
+                                @if (!string.IsNullOrEmpty(order.DeliveryNotes))
+                                {
+                                    <p class="mb-1"><i class="mdi mdi-note-text"></i> <strong>Notes:</strong> @order.DeliveryNotes</p>
+                                }
+                                <hr/>
+                                <p class="mb-2"><strong><i class="mdi mdi-cart"></i> Produits commandés:</strong></p>
+                                @if (order.OrderItems != null && order.OrderItems.Any())
+                                {
+                                    <ul class="list-unstyled ms-3">
+                                        @foreach (var item in order.OrderItems)
+                                        {
+                                            <li class="mb-1">
+                                                <small>• @item.Product?.Name x @item.Quantity - @item.Subtotal.ToString("C")</small>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn-accept flex-fill" onclick="acceptOrder(@order.Id)">
+                                    <i class="mdi mdi-check"></i> Accepter
+                                </button>
+                                <button type="button" class="btn-reject flex-fill" onclick="refuseOrder(@order.Id)">
+                                    <i class="mdi mdi-close"></i> Refuser
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="mdi mdi-package-variant"></i>
+                <h5>Aucune commande disponible pour le moment</h5>
+                <p>Revenez plus tard pour voir de nouvelles commandes</p>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function acceptOrder(orderId) {
+        console.log("1. Button clicked for order:", orderId);
+        
+        // Removed confirm for debugging
+        // if (!confirm('Voulez-vous accepter cette livraison ?')) return;
+        
+        const url = '/Delivery/AcceptOrder/' + orderId;
+        console.log("2. Fetching URL:", url);
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(r => {
+            console.log("3. Response received, status:", r.status);
+            return r.json();
+        })
+        .then(data => {
+            console.log("4. Data received:", data);
+            if (data.success) {
+                alert('Livraison acceptée !');
+                location.reload();
+            } else {
+                alert('Erreur: ' + data.message);
+            }
+        }).catch(err => {
+            console.error("FETCH ERROR:", err);
+            alert('Erreur de connexion: ' + err);
+        });
+    }
+
+    function refuseOrder(orderId) {
+        console.log("1. Refuse clicked for order:", orderId);
+        
+        // Removed confirm for debugging
+        
+        const url = '/Delivery/RefuseOrder/' + orderId;
+        console.log("2. Fetching URL:", url);
+        
+        fetch(url, {
+            method: 'POST'
+        })
+        .then(r => r.json())
+        .then(data => {
+            console.log("Data:", data);
+            if (data.success) {
+                alert('Livraison refusée');
+                location.reload();
+            } else {
+                alert('Erreur: ' + data.message);
+            }
+        }).catch(err => {
+            console.error(err);
+            alert('Erreur de connexion');
+        });
+    }
+
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('customToast');
+        const msgEl = document.getElementById('toastMessage');
+        const iconEl = toast.querySelector('.toast-icon i');
+        
+        msgEl.innerText = message;
+        
+        // Reset classes
+        toast.className = 'custom-toast';
+        
+        if (type === 'error') {
+            toast.style.background = 'rgba(239, 68, 68, 0.95)'; // Red for error
+            iconEl.className = 'mdi mdi-alert-circle';
+        } else {
+            toast.style.background = 'rgba(16, 185, 129, 0.95)'; // Green for success
+            iconEl.className = 'mdi mdi-check';
+        }
+        
+        toast.classList.add('show');
+        
+        // Hide after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
+    function completeDelivery(orderId) {
+        console.log("1. Complete clicked for order:", orderId);
+        
+        const url = '/Delivery/CompleteDelivery/' + orderId;
+        console.log("2. Fetching URL:", url);
+
+        fetch(url, {
+            method: 'POST'
+        })
+        .then(r => r.json())
+        .then(data => {
+            console.log("Data:", data);
+            if (data.success) {
+                showToast('Livraison marquée comme terminée ! 🚀');
+                setTimeout(() => location.reload(), 1500); // Wait a bit before reload to show toast
+            } else {
+                showToast(data.message, 'error');
+            }
+        }).catch(err => {
+            console.error(err);
+            showToast('Erreur de connexion', 'error');
+        });
+    }
+
+    function toggleAvailability() {
+        console.log("Toggle availability clicked");
+        fetch('/Delivery/ToggleAvailability', {
+            method: 'POST'
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        }).catch(err => {
+            console.error(err);
+            alert('Erreur de connexion');
+        });
+    }
+</script>

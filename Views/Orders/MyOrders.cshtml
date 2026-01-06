@@ -1,0 +1,375 @@
+@{
+    ViewData["Title"] = "Mes Commandes";
+    var orders = ViewBag.Orders as List<Feedo.Entities.Order>;
+}
+
+<style>
+    .my-orders-container {
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 20px;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 10px;
+    }
+
+    .page-header p {
+        color: #6b7280;
+        font-size: 1.1rem;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border-left: 5px solid #667eea;
+    }
+
+    .order-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .order-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .order-date {
+        color: #6b7280;
+        font-size: 0.95rem;
+    }
+
+    .status-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-block;
+    }
+
+    .status-pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-confirmed {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .status-indelivery {
+        background: #e0e7ff;
+        color: #3730a3;
+    }
+
+    .status-delivered {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-cancelled {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .order-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin: 20px 0;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: start;
+    }
+
+    .detail-item i {
+        color: #667eea;
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .detail-item-content h4 {
+        font-size: 0.85rem;
+        color: #9ca3af;
+        margin: 0 0 5px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-item-content p {
+        margin: 0;
+        color: #374151;
+        font-weight: 600;
+    }
+
+    .order-items {
+        background: #f9fafb;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+
+    .order-items h3 {
+        font-size: 1.1rem;
+        color: #374151;
+        margin-bottom: 15px;
+        font-weight: 700;
+    }
+
+    .item-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .item-row:last-child {
+        border-bottom: none;
+    }
+
+    .item-name {
+        color: #1f2937;
+        font-weight: 500;
+    }
+
+    .item-quantity {
+        color: #6b7280;
+        margin-left: 10px;
+    }
+
+    .item-price {
+        color: #667eea;
+        font-weight: 700;
+    }
+
+    .order-total {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .order-total h3 {
+        margin: 0;
+        font-size: 1.2rem;
+    }
+
+    .order-total .amount {
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+    .empty-state i {
+        font-size: 5rem;
+        color: #d1d5db;
+        margin-bottom: 20px;
+    }
+
+    .empty-state h2 {
+        color: #6b7280;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: #9ca3af;
+    }
+
+    .btn-shop {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-shop:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+</style>
+
+<div class="my-orders-container">
+    <div class="page-header">
+        <h1><i class="fas fa-shopping-bag"></i> Mes Commandes</h1>
+        <p>Suivez l'état de toutes vos commandes</p>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (orders != null && orders.Any())
+    {
+        @foreach (var order in orders)
+        {
+            var statusClass = order.Status switch
+            {
+                Feedo.Entities.OrderStatus.Pending => "status-pending",
+                Feedo.Entities.OrderStatus.Confirmed => "status-confirmed",
+                Feedo.Entities.OrderStatus.InDelivery => "status-indelivery",
+                Feedo.Entities.OrderStatus.Delivered => "status-delivered",
+                Feedo.Entities.OrderStatus.Cancelled => "status-cancelled",
+                _ => "status-pending"
+            };
+
+            var statusText = order.Status switch
+            {
+                Feedo.Entities.OrderStatus.Pending => "En attente",
+                Feedo.Entities.OrderStatus.Confirmed => "Confirmée",
+                Feedo.Entities.OrderStatus.InDelivery => "En cours de livraison",
+                Feedo.Entities.OrderStatus.Delivered => "Livrée",
+                Feedo.Entities.OrderStatus.Cancelled => "Annulée",
+                _ => "En attente"
+            };
+
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-number">Commande #@order.Id</div>
+                        <div class="order-date">
+                            <i class="fas fa-calendar"></i> @order.CreationA.ToString("dd MMMM yyyy à HH:mm")
+                        </div>
+                    </div>
+                    <div>
+                        <span class="status-badge @statusClass">@statusText</span>
+                    </div>
+                </div>
+
+                <div class="order-details">
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div class="detail-item-content">
+                            <h4>Adresse de livraison</h4>
+                            <p>@order.DeliveryAddress</p>
+                        </div>
+                    </div>
+
+                    @if (order.Livreur != null)
+                    {
+                        <div class="detail-item">
+                            <i class="fas fa-motorcycle"></i>
+                            <div class="detail-item-content">
+                                <h4>Livreur</h4>
+                                <p>@order.Livreur.Prenom @order.Livreur.Nom</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="detail-item">
+                            <i class="fas fa-hourglass-half"></i>
+                            <div class="detail-item-content">
+                                <h4>Livreur</h4>
+                                <p>En attente d'attribution</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                @if (!string.IsNullOrEmpty(order.DeliveryNotes))
+                {
+                    <div class="detail-item" style="margin: 10px 0;">
+                        <i class="fas fa-sticky-note"></i>
+                        <div class="detail-item-content">
+                            <h4>Notes</h4>
+                            <p>@order.DeliveryNotes</p>
+                        </div>
+                    </div>
+                }
+
+                <div class="order-items">
+                    <h3><i class="fas fa-utensils"></i> Produits commandés</h3>
+                    @if (order.OrderItems != null && order.OrderItems.Any())
+                    {
+                        @foreach (var item in order.OrderItems)
+                        {
+                            <div class="item-row">
+                                <div>
+                                    <span class="item-name">@item.Product?.Name</span>
+                                    <span class="item-quantity">x @item.Quantity</span>
+                                </div>
+                                <div class="item-price">@item.Subtotal.ToString("C")</div>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div class="order-total">
+                    <h3>Total</h3>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="amount me-3">@order.TotalAmount.ToString("C")</div>
+                        @if (order.Status == Feedo.Entities.OrderStatus.Delivered || order.Status == Feedo.Entities.OrderStatus.Pending)
+                        {
+                            <form action="@Url.Action("DeleteOrder", "Orders", new { id = order.Id })" method="post" onsubmit="return confirm('Confirmer la suppression ?');" style="margin:0;">
+                                <button type="submit" class="btn btn-sm btn-outline-light" title="Supprimer de l'historique">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="fas fa-shopping-basket"></i>
+            <h2>Aucune commande pour le moment</h2>
+            <p>Commencez à commander vos plats préférés !</p>
+            <a href="@Url.Action("Index", "Home")" class="btn-shop">
+                <i class="fas fa-utensils"></i> Découvrir le menu
+            </a>
+        </div>
+    }
+</div>

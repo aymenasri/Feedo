@@ -75,6 +75,10 @@ using (var scope = app.Services.CreateScope())
 {
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminExistsAsync();
+    
+    // Run Diagnostics
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    Feedo.Scripts.OrderDiagnostics.Run(context);
 }
 
 // Configuration des routes

@@ -46,5 +46,11 @@ namespace Feedo.Services
         /// <exception cref="ArgumentException">Thrown when ID is invalid</exception>
         /// <exception cref="KeyNotFoundException">Thrown when client is not found</exception>
         Task DeleteClientAsync(int id);
+
+        /// <summary>
+        /// Hard deletes a user account by email (orphaned cleanup).
+        /// </summary>
+        /// <param name="email">Email of the user to delete</param>
+        Task DeleteUserByEmailAsync(string email);
     }
 }

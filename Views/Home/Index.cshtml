@@ -1250,25 +1250,44 @@
             </div>
         </div>
 
-        <!-- Card 2: Red Recruitment -->
+        <!-- Card 2: Red Recruitment or Livreur Status -->
         <div class="col-md-6">
             <div class="promo-card yellow-card p-5 position-relative animate-in interactive-card">
                 <div class="plus-icon">
                     <i class="fas fa-plus"></i>
                 </div>
-                <h2 class="display-4 fw-black mb-4 text-white">
-                    REJOIN<br>L'ÉQUIPE
-                </h2>
-                <p class="mb-4 text-white" style="opacity: 0.9;">
-                    Deviens livreur partenaire Feedo. Maîtrise ton emploi du temps, gagne des revenus attractifs et rejoins une communauté dynamique. 
-                    Liberté totale, zéro contrainte !
-                </p>
-                <div class="d-flex align-items-center gap-3">
-                    <button class="btn-promo-black interactive-element">Postuler</button>
-                    <a href="#" class="fw-bold text-white text-decoration-none follow-link interactive-element">
-                        Découvrir les avantages <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
+                
+                @if (User.IsInRole("Livreur"))
+                {
+                    var firstName = User.Identity?.Name?.Split(' ')[0] ?? "Partenaire";
+                    <h2 class="display-4 fw-black mb-4 text-white">
+                        PRÊT À ROULER,<br>@firstName.ToUpper() ?
+                    </h2>
+                    <p class="mb-4 text-white" style="opacity: 0.9;">
+                        Tu es actuellement hors ligne. Accède à ton dashboard pour activer ton statut et commencer à recevoir des commandes.
+                    </p>
+                    <div class="d-flex align-items-center gap-3">
+                        <a href="@Url.Action("Dashboard", "Delivery")" class="btn-promo-black interactive-element text-decoration-none">ALLER AU DASHBOARD</a>
+                        <div class="fw-bold text-white interactive-element">
+                            <i class="fas fa-wallet me-2"></i> Gains de la semaine : @(ViewBag.LivreurWeeklyEarnings != null ? ((decimal)ViewBag.LivreurWeeklyEarnings).ToString("N2") : "0.00") €
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <h2 class="display-4 fw-black mb-4 text-white">
+                        SOIS TON<br>PROPRE PATRON
+                    </h2>
+                    <p class="mb-4 text-white" style="opacity: 0.9;">
+                        Transforme ton temps libre en revenus. Roule quand tu veux, où tu veux. 100% des pourboires sont pour toi. Inscription validée en 24h.
+                    </p>
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn-promo-black interactive-element">COMMENCER À GAGNER</button>
+                        <a href="#" class="fw-bold text-white text-decoration-none follow-link interactive-element">
+                            Voir les revenus estimés <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                }
             </div>
         </div>
     </div>

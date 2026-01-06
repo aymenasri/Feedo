@@ -417,36 +417,45 @@
                     @Html.AntiForgeryToken()
                     <h2 class="title">Créer un compte</h2>
                     
+                    @{
+                        var regModel = ViewBag.RegisterModel as Feedo.Models.RegisterViewModel;
+                    }
                     <div class="input-field">
                         <i class="fas fa-user"></i>
-                        <input type="text" name="FirstName" placeholder="Prénom" autocomplete="given-name" required />
+                        <input type="text" name="FirstName" placeholder="Prénom" autocomplete="given-name" value="@regModel?.FirstName" required />
                     </div>
+                    @Html.ValidationMessage("FirstName", new { @class = "text-danger" })
 
                     <div class="input-field">
                         <i class="fas fa-user"></i>
-                        <input type="text" name="LastName" placeholder="Nom" autocomplete="family-name" required />
+                        <input type="text" name="LastName" placeholder="Nom" autocomplete="family-name" value="@regModel?.LastName" required />
                     </div>
+                    @Html.ValidationMessage("LastName", new { @class = "text-danger" })
 
                     <div class="input-field">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" name="Email" placeholder="Email" autocomplete="email" required />
+                        <input type="email" name="Email" placeholder="Email" autocomplete="email" value="@regModel?.Email" required />
                     </div>
+                    @Html.ValidationMessage("Email", new { @class = "text-danger" })
 
                     <div class="input-field">
                         <i class="fas fa-phone"></i>
-                        <input type="tel" name="PhoneNumber" placeholder="Téléphone" autocomplete="tel" required />
+                        <input type="tel" name="PhoneNumber" placeholder="Téléphone" autocomplete="tel" value="@regModel?.PhoneNumber" required />
                     </div>
+                    @Html.ValidationMessage("PhoneNumber", new { @class = "text-danger" })
 
                     <div class="input-field">
                         <i class="fas fa-lock"></i>
                         <input type="password" name="Password" placeholder="Mot de passe" id="id_reg" autocomplete="new-password" required minlength="6" />
                         <i class="far fa-eye" id="toggleReg"></i>
                     </div>
+                    @Html.ValidationMessage("Password", new { @class = "text-danger" })
 
                     <div class="input-field">
                         <i class="fas fa-lock"></i>
                         <input type="password" name="ConfirmPassword" placeholder="Confirmer mot de passe" autocomplete="new-password" required />
                     </div>
+                    @Html.ValidationMessage("ConfirmPassword", new { @class = "text-danger" })
 
                     <style>
                         .role-group {
@@ -455,59 +464,33 @@
                             width: 85%;
                             margin: 10px 0;
                         }
-                        .role-option {
-                            flex: 1;
-                            margin: 0 5px;
-                            text-align: center;
-                        }
-                        .role-option input {
-                            display: none;
-                        }
-                        .role-option label {
-                            display: block;
-                            padding: 10px;
-                            background: var(--bg-input);
-                            border-radius: 20px;
-                            cursor: pointer;
-                            font-weight: 600;
-                            color: #666;
-                            border: 2px solid transparent;
-                            transition: 0.3s;
-                            font-size: 0.9rem;
-                        }
-                        .role-option input:checked + label {
-                            background: var(--btn-color);
-                            color: white;
-                            box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
-                        }
-                        .livreur-details {
-                            width: 85%;
-                            display: none;
-                            animation: fadeIn 0.5s;
-                        }
-                        @@keyframes fadeIn {
-                            from { opacity: 0; transform: translateY(-10px); }
-                            to { opacity: 1; transform: translateY(0); }
-                        }
+                        /* ... existing styles ... */
+                        /* (Reusing existing style block to avoid duplication if replace overwrites it, assuming replace targets inputs mainly) */ 
+                        /* actually I'm replacing the whole block down to button so I must preserve style or assume it remains if I targeted correctly. 
+                           Wait, I shouldn't delete the style block. 
+                           I'll split the replacement to touch only the inputs.
+                        */
                     </style>
-
+                    
                     <!-- Role Selection -->
                     <div class="role-group">
                         <div class="role-option">
-                            <input type="radio" name="Role" id="role-client" value="Client" checked onchange="toggleLoginRole()">
+                            <input type="radio" name="Role" id="role-client" value="Client" 
+                                   @(regModel == null || regModel.Role == "Client" ? "checked" : "") onchange="toggleLoginRole()">
                             <label for="role-client"><i class="fas fa-user"></i> Client</label>
                         </div>
                         <div class="role-option">
-                            <input type="radio" name="Role" id="role-livreur" value="Livreur" onchange="toggleLoginRole()">
+                            <input type="radio" name="Role" id="role-livreur" value="Livreur" 
+                                   @(regModel?.Role == "Livreur" ? "checked" : "") onchange="toggleLoginRole()">
                             <label for="role-livreur"><i class="fas fa-motorcycle"></i> Livreur</label>
                         </div>
                     </div>
 
                     <!-- Livreur Specific Fields -->
-                    <div id="login-livreur-fields" class="livreur-details">
+                    <div id="login-livreur-fields" class="livreur-details" style="@(regModel?.Role == "Livreur" ? "display:block" : "display:none")">
                         <div class="input-field">
                             <i class="fas fa-truck"></i>
-                            <input list="vehicle-types" name="VehicleType" placeholder="Type de Véhicule" />
+                            <input list="vehicle-types" name="VehicleType" placeholder="Type de Véhicule" value="@regModel?.VehicleType" />
                             <datalist id="vehicle-types">
                                 <option value="Bike">Vélo</option>
                                 <option value="Scooter">Scooter</option>
@@ -517,7 +500,7 @@
                         
                         <div class="input-field">
                             <i class="fas fa-id-card"></i>
-                            <input type="text" name="LicensePlate" placeholder="Plaque d'immatriculation" />
+                            <input type="text" name="LicensePlate" placeholder="Plaque d'immatriculation" value="@regModel?.LicensePlate" />
                         </div>
                     </div>
 

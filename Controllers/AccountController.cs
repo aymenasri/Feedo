@@ -42,7 +42,7 @@ namespace Feedo.Controllers
                     {
                         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                         new Claim(ClaimTypes.Name, $"{user.Prenom} {user.Nom}"),
-                        new Claim(ClaimTypes.Email, user.Compte),
+                        new Claim(ClaimTypes.Email, user.Email),
                         new Claim(ClaimTypes.Role, user.Role ?? "User") // Ajout du rôle
                     };
 
@@ -94,8 +94,12 @@ namespace Feedo.Controllers
                     if (await _authService.EmailExistsAsync(model.Email))
                     {
                         ModelState.AddModelError("Email", "Un compte avec cet email existe déjà.");
-                        return View(model);
+                        ViewData["ShowRegister"] = true;
+                        ViewBag.RegisterModel = model; // Pass data back to view
+                        return View("Login");
                     }
+
+                    // Register the user
 
                     // Register the user
                     var user = await _authService.RegisterAsync(model);
@@ -105,7 +109,7 @@ namespace Feedo.Controllers
                     {
                         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                         new Claim(ClaimTypes.Name, $"{user.Prenom} {user.Nom}"),
-                        new Claim(ClaimTypes.Email, user.Compte),
+                        new Claim(ClaimTypes.Email, user.Email),
                         new Claim(ClaimTypes.Role, user.Role ?? "User") // Ajout du rôle
                     };
 

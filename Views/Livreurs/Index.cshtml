@@ -2,107 +2,131 @@
 @using Feedo.Shared
 
 @{
-    ViewData["Title"] = "Courier Management";
-    Layout = "_Layout";
+    ViewData["Title"] = "Gestion des Livreurs";
+    Layout = "~/Views/Shared/_PurpleLayout.cshtml";
 }
 
-<style>
-    .admin-container {
-        padding: 50px 20px;
-        color: white;
-    }
-    
-    .status-badge {
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.85rem;
-    }
-    
-    .status-offline { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.3); }
-    .status-available { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .status-busy { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
-
-    .btn-toggle {
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: white;
-        padding: 5px 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    .btn-toggle:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
-</style>
-
-<div class="container admin-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Couriers</h1>
-        <a asp-action="Create" class="btn btn-primary">
-            <i class="fas fa-plus"></i> New Courier
-        </a>
-    </div>
-
-    <div class="table-responsive">
-        <table class="table table-dark table-hover">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Vehicle</th>
-                    <th>Status</th>
-                    <th>Rating</th>
-                    <th>Deliveries</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model) {
-                <tr>
-                    <td>
-                        <div class="d-flex align-items-center gap-2">
-                             <div class="avatar-circle" style="width:30px;height:30px;background:#333;border-radius:50%;display:flex;align-items:center;justify-content:center;">
-                                 @item.Prenom.Substring(0,1)
-                             </div>
-                             @item.Prenom @item.Nom
-                        </div>
-                    </td>
-                    <td>@item.VehicleType <span class="text-muted small">(@item.LicensePlate)</span></td>
-                    <td>
-                        @{
-                            var statusClass = item.Status switch {
-                                LivreurStatus.Available => "status-available",
-                                LivreurStatus.Busy => "status-busy",
-                                _ => "status-offline"
-                            };
-                        }
-                        <span class="status-badge @statusClass" id="status-badge-@item.Id">@item.Status</span>
-                    </td>
-                    <td><i class="fas fa-star text-warning"></i> @item.Rating.ToString("F1")</td>
-                    <td>@item.TotalDeliveries</td>
-                    <td>
-                        <button class="btn-toggle btn-sm me-2" onclick="toggleStatus(@item.Id)">
-                            <i class="fas fa-power-off"></i> Toggle
-                        </button>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary btn-sm"><i class="fas fa-edit"></i></a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i></a>
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+<div class="page-header">
+    <h3 class="page-title">
+        <span class="page-title-icon bg-gradient-primary text-white me-2">
+            <i class="mdi mdi-motorbike"></i>
+        </span> Gestion des Livreurs
+    </h3>
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">
+                <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+            </li>
+        </ul>
+    </nav>
 </div>
 
-<script>
-function toggleStatus(id) {
-    fetch(`/Livreurs/ToggleStatus/${id}`, { method: 'POST' })
-        .then(r => r.json())
-        .then(data => {
-            if(data.success) {
-                location.reload(); 
-            }
-        });
-}
-</script>
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h4 class="card-title">Liste des Livreurs</h4>
+                        <p class="card-description"> Gérer votre flotte de livreurs </p>
+                    </div>
+                    <a asp-action="Create" class="btn btn-gradient-primary btn-fw">
+                        <i class="mdi mdi-account-plus"></i> Ajouter un Livreur
+                    </a>
+                </div>
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success">@TempData["Success"]</div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["Error"]</div>
+                }
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Livreur</th>
+                                <th>Véhicule</th>
+                                <th>Statut</th>
+                                <th>Note</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <img src="~/assets/images/faces/face1.jpg" class="me-2" alt="image">
+                                            @item.Prenom @item.Nom
+                                        </td>
+                                        <td>
+                                            @if (item.VehicleType == "Bike")
+                                            {
+                                                <i class="mdi mdi-bike text-info mdi-24px" title="Vélo"></i>
+                                            }
+                                            else if (item.VehicleType == "Scooter")
+                                            {
+                                                <i class="mdi mdi-motorbike text-warning mdi-24px" title="Scooter"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="mdi mdi-car text-primary mdi-24px" title="Voiture"></i>
+                                            }
+                                            <span class="ms-2">@item.LicensePlate</span>
+                                        </td>
+                                        <td>
+                                            @if (item.Status == LivreurStatus.Available)
+                                            {
+                                                <label class="badge badge-gradient-success">Disponible</label>
+                                            }
+                                            else if (item.Status == LivreurStatus.Busy)
+                                            {
+                                                <label class="badge badge-gradient-warning">En Livraison</label>
+                                            }
+                                            else
+                                            {
+                                                <label class="badge badge-gradient-secondary">Hors Ligne</label>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="text-warning">
+                                                @for (int i = 0; i < (int)item.Rating; i++)
+                                                {
+                                                    <i class="mdi mdi-star"></i>
+                                                }
+                                                @for (int i = (int)item.Rating; i < 5; i++)
+                                                {
+                                                    <i class="mdi mdi-star-outline"></i>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-inverse-info btn-icon-text btn-sm">
+                                                <i class="mdi mdi-pencil btn-icon-prepend"></i> Modifier
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-inverse-danger btn-icon-text btn-sm">
+                                                <i class="mdi mdi-delete btn-icon-prepend"></i> Supprimer
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center">Aucun livreur trouvé.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

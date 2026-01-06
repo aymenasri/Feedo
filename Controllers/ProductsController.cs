@@ -131,6 +131,110 @@ namespace Feedo.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Products/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
+
+        // POST: Products/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Product product, IFormFile? imageFile)
+        {
+            if (id != product.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Handle Image Upload
+                     if (imageFile != null && imageFile.Length > 0)
+                    {
+                        // Generate unique filename
+                        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                        string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "products");
+                        
+                        // Create folder if not exists
+                        if (!Directory.Exists(uploadsFolder))
+                            Directory.CreateDirectory(uploadsFolder);
+                            
+                        string filePath = Path.Combine(uploadsFolder, fileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await imageFile.CopyToAsync(fileStream);
+                        }
+
+                        // Delete old image if exists and different
+                         if (!string.IsNullOrEmpty(product.ImageUrl) && product.ImageUrl.StartsWith("/images/products/"))
+                        {
+                            // Optional: Cleanup old image logic could go here
+                        }
+
+                        product.ImageUrl = "/images/products/" + fileName;
+                    }
+                    else 
+                    {
+                        // Keep existing image if no new file uploaded
+                        // We need to detach the entity or use AsNoTracking to get original, OR simple hidden field in View
+                        // For now assuming the View passes back the hidden ImageUrl, otherwise we might lose it.
+                        // Better approach: Get original from DB to preserve ImageUrl if not in form
+                        var originalProduct = await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+                        if (originalProduct != null && string.IsNullOrEmpty(product.ImageUrl))
+                        {
+                            product.ImageUrl = originalProduct.ImageUrl;
+                        }
+                    }
+
+                    // Recalculate OldPrice logic
+                    if (product.DiscountPercentage.HasValue && product.DiscountPercentage.Value > 0)
+                    {
+                        var discountFactor = 1 - (product.DiscountPercentage.Value / 100);
+                        product.OldPrice = Math.Round(product.Price / discountFactor, 2);
+                    }
+                    else
+                    {
+                        product.OldPrice = null;
+                    }
+
+                    _context.Update(product);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ProductExists(product.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(product);
+        }
+
+        private bool ProductExists(int id)
+        {
+            return _context.Products.Any(e => e.Id == id);
+        }
+
         // POST: Products/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]

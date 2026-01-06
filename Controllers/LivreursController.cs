@@ -112,6 +112,27 @@ namespace Feedo.Controllers
             var livreur = await _context.Livreurs.FindAsync(id);
             if (livreur != null)
             {
+                // Find and delete the associated Utilisateur (Login account)
+                if (!string.IsNullOrEmpty(livreur.Email))
+                {
+                    var user = await _context.Utilisateurs.FirstOrDefaultAsync(u => u.Email == livreur.Email);
+                    if (user != null)
+                    {
+                        _context.Utilisateurs.Remove(user);
+                    }
+                }
+
+                // Nullify LivreurId in associated orders to avoid FK constraint violation
+                var orders = await _context.Orders.Where(o => o.LivreurId == id).ToListAsync();
+                foreach (var order in orders)
+                {
+                    order.LivreurId = null;
+                    if (order.Status == OrderStatus.InDelivery)
+                    {
+                        order.Status = OrderStatus.Pending; // Reset status if it was in delivery
+                    }
+                }
+
                 _context.Livreurs.Remove(livreur);
                 await _context.SaveChangesAsync();
             }
