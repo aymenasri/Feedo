@@ -1,20 +1,20 @@
-﻿@model Feedo.Entities.Client
+@model Feedo.Entities.Client
 
 @{
-    ViewData["Title"] = "Ajouter un Client";
+    ViewData["Title"] = "Modifier le Client";
     Layout = "~/Views/Shared/_PurpleLayout.cshtml";
 }
 
 <div class="page-header">
     <h3 class="page-title">
-        <span class="page-title-icon bg-gradient-success text-white me-2">
-            <i class="mdi mdi-account-plus"></i>
-        </span> Ajouter un Nouveau Client
+        <span class="page-title-icon bg-gradient-primary text-white me-2">
+            <i class="mdi mdi-account-edit"></i>
+        </span> Modifier le Client
     </h3>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-action="Index">Clients</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Créer</li>
+            <li class="breadcrumb-item active" aria-current="page">Modifier</li>
         </ol>
     </nav>
 </div>
@@ -23,11 +23,12 @@
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Nouveau Client</h4>
-                <p class="card-description"> Remplissez les informations ci-dessous </p>
+                <h4 class="card-title">Modifier les informations</h4>
+                <p class="card-description"> Mettre à jour les détails du client </p>
                 
-                <form class="forms-sample" asp-action="Create">
+                <form class="forms-sample" asp-action="Edit">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
                     
                     <div class="form-group">
                         <label asp-for="Nom">Nom</label>
@@ -49,15 +50,10 @@
 
                     <div class="form-group">
                         <label asp-for="Compte">Identifiant Compte</label>
-                        <input asp-for="Compte" class="form-control" placeholder="Compte">
+                        <input asp-for="Compte" class="form-control" placeholder="Compte" readonly>
                     </div>
 
-                    <div class="form-group">
-                        <label asp-for="MotPasse">Mot de passe</label>
-                        <input asp-for="MotPasse" type="password" class="form-control" placeholder="Mot de passe">
-                    </div>
-
-                    <button type="submit" class="btn btn-gradient-success me-2">Créer</button>
+                    <button type="submit" class="btn btn-gradient-primary me-2">Enregistrer</button>
                     <a asp-action="Index" class="btn btn-light">Annuler</a>
                 </form>
             </div>
@@ -66,7 +62,5 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

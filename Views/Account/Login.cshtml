@@ -448,7 +448,88 @@
                         <input type="password" name="ConfirmPassword" placeholder="Confirmer mot de passe" autocomplete="new-password" required />
                     </div>
 
+                    <style>
+                        .role-group {
+                            display: flex;
+                            justify-content: space-between;
+                            width: 85%;
+                            margin: 10px 0;
+                        }
+                        .role-option {
+                            flex: 1;
+                            margin: 0 5px;
+                            text-align: center;
+                        }
+                        .role-option input {
+                            display: none;
+                        }
+                        .role-option label {
+                            display: block;
+                            padding: 10px;
+                            background: var(--bg-input);
+                            border-radius: 20px;
+                            cursor: pointer;
+                            font-weight: 600;
+                            color: #666;
+                            border: 2px solid transparent;
+                            transition: 0.3s;
+                            font-size: 0.9rem;
+                        }
+                        .role-option input:checked + label {
+                            background: var(--btn-color);
+                            color: white;
+                            box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+                        }
+                        .livreur-details {
+                            width: 85%;
+                            display: none;
+                            animation: fadeIn 0.5s;
+                        }
+                        @@keyframes fadeIn {
+                            from { opacity: 0; transform: translateY(-10px); }
+                            to { opacity: 1; transform: translateY(0); }
+                        }
+                    </style>
+
+                    <!-- Role Selection -->
+                    <div class="role-group">
+                        <div class="role-option">
+                            <input type="radio" name="Role" id="role-client" value="Client" checked onchange="toggleLoginRole()">
+                            <label for="role-client"><i class="fas fa-user"></i> Client</label>
+                        </div>
+                        <div class="role-option">
+                            <input type="radio" name="Role" id="role-livreur" value="Livreur" onchange="toggleLoginRole()">
+                            <label for="role-livreur"><i class="fas fa-motorcycle"></i> Livreur</label>
+                        </div>
+                    </div>
+
+                    <!-- Livreur Specific Fields -->
+                    <div id="login-livreur-fields" class="livreur-details">
+                        <div class="input-field">
+                            <i class="fas fa-truck"></i>
+                            <input list="vehicle-types" name="VehicleType" placeholder="Type de Véhicule" />
+                            <datalist id="vehicle-types">
+                                <option value="Bike">Vélo</option>
+                                <option value="Scooter">Scooter</option>
+                                <option value="Car">Voiture</option>
+                            </datalist>
+                        </div>
+                        
+                        <div class="input-field">
+                            <i class="fas fa-id-card"></i>
+                            <input type="text" name="LicensePlate" placeholder="Plaque d'immatriculation" />
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn solid">Créer mon compte</button>
+                    
+                    <script>
+                        function toggleLoginRole() {
+                            const isLivreur = document.getElementById('role-livreur').checked;
+                            const fields = document.getElementById('login-livreur-fields');
+                            fields.style.display = isLivreur ? 'block' : 'none';
+                        }
+                    </script>
                 </form>
             </div>
         </div>

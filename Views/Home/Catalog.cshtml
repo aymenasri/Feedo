@@ -236,43 +236,83 @@
 <section class="container">
     @if (Model != null && Model.Any())
     {
-        <div class="products-grid">
-            @foreach (var product in Model)
-            {
-                <div class="product-card">
-                    <div class="product-image-wrapper">
-                        <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "/images/no-image.png" : product.ImageUrl)" 
-                             alt="@product.Name" 
-                             class="product-image">
-                        
-                        @if (product.DiscountPercentage.HasValue && product.DiscountPercentage.Value > 0)
-                        {
-                            <div class="product-badge">
-                                -@product.DiscountPercentage.Value.ToString("0")%
-                            </div>
-                        }
+        <style>
+    .catalog-item-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.3s ease;
+    }
+
+    .catalog-image-hover-wrapper {
+        border-radius: 1rem;
+        overflow: hidden;
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .catalog-image-hover-wrapper:hover {
+        transform: scale(1.05); /* Zoom effect */
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4); /* Deep drop shadow */
+        cursor: pointer;
+    }
+    
+    .catalog-image-hover-wrapper img {
+         transition: transform 0.5s ease;
+    }
+
+    .catalog-image-hover-wrapper:hover img {
+        transform: scale(1.1); /* Slight internal zoom for parallax feel */
+    }
+</style>
+
+<div class="row g-4">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-6 col-lg-4">
+            <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="catalog-item-link">
+                <div class="card h-100 bg-dark border-0 shadow-sm text-white catalog-card">
+                     <!-- Hover Wrapper for Image -->
+                    <div class="catalog-image-hover-wrapper ratio ratio-4x3">
+                        <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/no-image.png" : item.ImageUrl)" 
+                             class="card-img-top object-fit-cover" 
+                             alt="@item.Name">
                     </div>
                     
-                    <div class="product-info">
-                        <h3 class="product-name">@product.Name</h3>
-                        <p class="product-description">@product.Description</p>
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title fw-bold mb-0">@item.Name</h5>
+                            @if (item.IsAvailable)
+                            {
+                                <span class="badge bg-success bg-opacity-75 rounded-pill">Disponible</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger bg-opacity-75 rounded-pill">Épuisé</span>
+                            }
+                        </div>
                         
-                        <div class="product-footer">
-                            <div class="product-price">
-                                <span class="price-current">€@product.Price.ToString("F2")</span>
-                                @if (product.OldPrice.HasValue && product.OldPrice > product.Price)
+                        <p class="card-text text-white-50 small flex-grow-1">@item.Description</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-white-10">
+                            <div class="price-tag">
+                                @if (item.OldPrice.HasValue)
                                 {
-                                    <span class="price-original">€@product.OldPrice.Value.ToString("F2")</span>
+                                    <span class="text-decoration-line-through text-white-50 me-2 small">€@item.OldPrice.Value.ToString("F2")</span>
                                 }
+                                <span class="fw-bold fs-5 text-danger">€@item.Price.ToString("F2")</span>
                             </div>
-                            <button class="add-to-cart-btn" onclick="addToCart(@product.Id, '@product.Name')">
-                                <i class="fas fa-shopping-cart"></i> Order
+                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                                <i class="bi bi-cart-plus me-1"></i> Ajouter
                             </button>
                         </div>
                     </div>
                 </div>
-            }
+            </a>
         </div>
+    }
+</div>
     }
     else
     {

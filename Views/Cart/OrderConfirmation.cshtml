@@ -185,7 +185,7 @@
         </div>
     </div>
     
-    @if (Model.Courier != null)
+    @if (Model.Livreur != null)
     {
         <div class="courier-info">
             <div class="courier-avatar">
@@ -193,9 +193,9 @@
             </div>
             <div style="text-align: left;">
                 <h4 style="margin: 0 0 5px 0;">Your Courier</h4>
-                <div style="font-weight: 700; font-size: 1.1rem;">@Model.Courier.Prenom @Model.Courier.Nom</div>
+                <div style="font-weight: 700; font-size: 1.1rem;">@Model.Livreur.Prenom @Model.Livreur.Nom</div>
                 <div style="color: #9ca3af; font-size: 0.9rem;">
-                    <i class="fas fa-star" style="color: #eab308;"></i> @Model.Courier.Rating.ToString("F1") Rating • @Model.Courier.VehicleType
+                    <i class="fas fa-star" style="color: #eab308;"></i> @Model.Livreur.Rating.ToString("F1") Rating • @Model.Livreur.VehicleType
                 </div>
             </div>
         </div>

@@ -2,6 +2,8 @@ using BCrypt.Net;
 using Feedo.Entities;
 using Feedo.Models;
 using Feedo.Repository;
+using Feedo.Data;
+using Feedo.Shared;
 
 namespace Feedo.Services
 {
@@ -12,10 +14,12 @@ namespace Feedo.Services
     public class AuthService : IAuthService
     {
         private readonly IUtilisateurRepository _utilisateurRepository;
+        private readonly ApplicationDbContext _context;
 
-        public AuthService(IUtilisateurRepository utilisateurRepository)
+        public AuthService(IUtilisateurRepository utilisateurRepository, ApplicationDbContext context)
         {
             _utilisateurRepository = utilisateurRepository;
+            _context = context;
         }
 
         public async Task<Utilisateur?> AuthenticateAsync(string email, string password)
@@ -43,7 +47,7 @@ namespace Feedo.Services
                 throw new InvalidOperationException("Un compte avec cet email existe déjà.");
             }
 
-            // Create new user
+            // Create new user (Authenticatable User)
             var user = new Utilisateur
             {
                 Prenom = model.FirstName,
@@ -52,11 +56,51 @@ namespace Feedo.Services
                 Compte = model.Email, // Also store in Compte for compatibility
                 NumeroTelephone = model.PhoneNumber,
                 MotPasse = HashPassword(model.Password),
+                Role = model.Role,
                 CreationA = DateTime.Now
             };
 
-            // Save to database
-            return await _utilisateurRepository.AddAsync(user);
+            // Save Authentication User
+            var createdUser = await _utilisateurRepository.AddAsync(user);
+
+            // Create Role-Specific Profile (Client or Livreur)
+            // We duplicate the basic data because they are separate tables in this architecture
+            if (model.Role == "Livreur")
+            {
+                var livreur = new Livreur
+                {
+                    Prenom = model.FirstName,
+                    Nom = model.LastName,
+                    Email = model.Email,
+                    Compte = model.Email,
+                    NumeroTelephone = model.PhoneNumber,
+                    MotPasse = user.MotPasse, // Sync password
+                    CreationA = DateTime.Now,
+                    VehicleType = model.VehicleType ?? "Bike",
+                    LicensePlate = model.LicensePlate,
+                    Status = LivreurStatus.Offline
+                };
+                _context.Livreurs.Add(livreur);
+                await _context.SaveChangesAsync();
+            }
+            else // Default to Client
+            {
+                var client = new Client
+                {
+                    Prenom = model.FirstName,
+                    Nom = model.LastName,
+                    Email = model.Email,
+                    Compte = model.Email,
+                    NumeroTelephone = model.PhoneNumber,
+                    MotPasse = user.MotPasse,
+                    CreationA = DateTime.Now,
+                    // Initialize client specific props if any
+                };
+                _context.Clients.Add(client);
+                await _context.SaveChangesAsync();
+            }
+
+            return createdUser;
         }
 
         public async Task<bool> EmailExistsAsync(string email)

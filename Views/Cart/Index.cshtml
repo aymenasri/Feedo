@@ -184,6 +184,86 @@
         background: #dc2626;
         color: white;
     }
+    .delivery-section {
+        margin-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 20px;
+    }
+
+    .delivery-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .input-group {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    .delivery-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px 45px 12px 15px;
+        border-radius: 10px;
+        color: white;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .delivery-input:focus {
+        outline: none;
+        border-color: #dc2626;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-locate {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        bottom: 5px;
+        background: rgba(220, 38, 38, 0.2);
+        color: #dc2626;
+        border: none;
+        width: 35px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-locate:hover {
+        background: #dc2626;
+        color: white;
+    }
+
+    .delivery-notes {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px;
+        border-radius: 10px;
+        color: white;
+        font-size: 0.9rem;
+        resize: vertical;
+        min-height: 80px;
+        font-family: inherit;
+    }
+    
+    .loading-spinner {
+        animation: spin 1s linear infinite;
+    }
+    
+    @@keyframes spin {
+        100% { transform: rotate(360deg); }
+    }
 </style>
 
 <div class="cart-container">
@@ -235,7 +315,24 @@
                 <span>Delivery</span>
                 <span>€2.99</span>
             </div>
-            <div class="summary-row">
+            
+            <!-- Delivery Section -->
+            <div class="delivery-section">
+                <div class="delivery-title">
+                    <i class="fas fa-map-marker-alt text-red"></i> Delivery Address
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="delivery-address" class="delivery-input" placeholder="Enter your full address..." required>
+                    <button type="button" class="btn-locate" onclick="locateUser()" title="Use my location">
+                        <i class="fas fa-crosshairs"></i>
+                    </button>
+                </div>
+                
+                <textarea id="delivery-notes" class="delivery-notes" placeholder="Delivery instructions (e.g. Intercom code, floor...)"></textarea>
+            </div>
+
+            <div class="summary-row" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
                 <span>Total</span>
                 <span id="total-amount">€@((Model.TotalAmount + 2.99m).ToString("F2"))</span>
             </div>
@@ -244,7 +341,7 @@
                 <i class="fas fa-lock"></i> Proceed to Checkout
             </button>
             
-            <a href="/Catalog" class="continue-shopping">
+            <a href="@Url.Action("Catalog", "Home")" class="continue-shopping">
                 <i class="fas fa-arrow-left"></i> Continue Shopping
             </a>
         </div>
@@ -255,7 +352,7 @@
             <i class="fas fa-shopping-cart"></i>
             <h2 style="color: #9ca3af; margin-bottom: 10px;">Your cart is empty</h2>
             <p style="color: #6b7280;">Add some delicious items to get started!</p>
-            <a href="/Catalog" class="continue-shopping">
+            <a href="@Url.Action("Catalog", "Home")" class="continue-shopping">
                 <i class="fas fa-utensils"></i> Browse Menu
             </a>
         </div>
@@ -318,22 +415,83 @@ function checkEmptyCart() {
     }
 }
 
-function proceedToCheckout() {
-    // For now, just show alert - will implement checkout form next
-    const address = prompt('Enter delivery address:');
-    if (address) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/Cart/Checkout';
-        
-        const addressInput = document.createElement('input');
-        addressInput.type = 'hidden';
-        addressInput.name = 'deliveryAddress';
-        addressInput.value = address;
-        
-        form.appendChild(addressInput);
-        document.body.appendChild(form);
-        form.submit();
+function locateUser() {
+    const btn = document.querySelector('.btn-locate');
+    const icon = btn.querySelector('i');
+    const input = document.getElementById('delivery-address');
+    
+    if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser");
+        return;
     }
+
+    // Loading state
+    icon.className = 'fas fa-spinner loading-spinner';
+    input.placeholder = "Locating...";
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            // Reverse Geocoding with Nominatim (OpenStreetMap)
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.display_name) {
+                        input.value = data.display_name;
+                    } else {
+                        alert("Address not found");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Could not fetch address details.");
+                })
+                .finally(() => {
+                    icon.className = 'fas fa-crosshairs';
+                    input.placeholder = "Enter your full address...";
+                });
+        },
+        (error) => {
+            console.error('Geolocation error:', error);
+            let msg = "Unable to retrieve your location";
+            if (error.code === 1) msg = "Please allow location access to use this feature";
+            alert(msg);
+            icon.className = 'fas fa-crosshairs';
+            input.placeholder = "Enter your full address...";
+        }
+    );
+}
+
+function proceedToCheckout() {
+    const addressInput = document.getElementById('delivery-address');
+    const notesInput = document.getElementById('delivery-notes');
+    
+    if (!addressInput.value.trim()) {
+        alert('Please enter a delivery address or use the location button.');
+        addressInput.focus();
+        addressInput.style.borderColor = '#ef4444';
+        return;
+    }
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/Cart/Checkout';
+    
+    const addrField = document.createElement('input');
+    addrField.type = 'hidden';
+    addrField.name = 'deliveryAddress';
+    addrField.value = addressInput.value;
+    
+    const notesField = document.createElement('input');
+    notesField.type = 'hidden';
+    notesField.name = 'notes';
+    notesField.value = notesInput.value;
+    
+    form.appendChild(addrField);
+    form.appendChild(notesField);
+    document.body.appendChild(form);
+    form.submit();
 }
 </script>

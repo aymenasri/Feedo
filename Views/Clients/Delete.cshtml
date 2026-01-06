@@ -1,0 +1,50 @@
+@model Feedo.Entities.Client
+
+@{
+    ViewData["Title"] = "Supprimer le Client";
+    Layout = "~/Views/Shared/_PurpleLayout.cshtml";
+}
+
+<div class="page-header">
+    <h3 class="page-title">
+        <span class="page-title-icon bg-gradient-danger text-white me-2">
+            <i class="mdi mdi-account-remove"></i>
+        </span> Supprimer le Client
+    </h3>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Clients</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Supprimer</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row">
+    <div class="col-md-6 grid-margin stretch-card mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title text-danger">Confirmer la suppression</h4>
+                <p class="card-description"> Êtes-vous sûr de vouloir supprimer ce client ? </p>
+                
+                <div class="bg-gray-100 p-4 rounded mb-4" style="background-color: #f8f9fa;">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Nom complet</dt>
+                        <dd class="col-sm-8">@Model.Prenom @Model.Nom</dd>
+
+                        <dt class="col-sm-4">Téléphone</dt>
+                        <dd class="col-sm-8">@Model.NumeroTelephone</dd>
+
+                        <dt class="col-sm-4">Compte</dt>
+                        <dd class="col-sm-8">@Model.Compte</dd>
+                    </dl>
+                </div>
+
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+                    <button type="submit" class="btn btn-gradient-danger me-2">Confirmer la suppression</button>
+                    <a asp-action="Index" class="btn btn-light">Annuler</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

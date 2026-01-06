@@ -19,7 +19,7 @@ namespace Feedo.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> AddToCart(int productId)
+        public async Task<IActionResult> AddToCart(int productId, int quantity, List<string> extras)
         {
             var product = await _context.Products.FindAsync(productId);
             
@@ -30,7 +30,23 @@ namespace Feedo.Controllers
             
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
             
-            cart.AddItem(product.Id, product.Name, product.Price, product.ImageUrl);
+            string finalName = product.Name;
+            decimal finalPrice = product.Price;
+
+            if (extras != null && extras.Any())
+            {
+                finalName += " (" + string.Join(", ", extras) + ")";
+                
+                // Simple logic for extras pricing (Demo purposes)
+                foreach(var extra in extras)
+                {
+                    if (extra.Contains("Cheese")) finalPrice += 1.00m;
+                    else if (extra.Contains("Boisson")) finalPrice += 2.00m;
+                    else if (extra.Contains("Bacon")) finalPrice += 1.50m;
+                }
+            }
+
+            cart.AddItem(product.Id, finalName, finalPrice, quantity, product.ImageUrl);
             
             HttpContext.Session.SetObjectAsJson("Cart", cart);
             

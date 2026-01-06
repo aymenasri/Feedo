@@ -34,7 +34,9 @@ namespace Feedo.Controllers
                     query = query.Where(p => p.DisplayLocation == displayLocation);
                     ViewData["FilterTitle"] = displayLocation == ProductDisplayLocation.HomeCarousel 
                         ? "Hero Promotions" 
-                        : "Product Catalog";
+                        : displayLocation == ProductDisplayLocation.MenuPage
+                            ? "Menu Page Items"
+                            : "Product Catalog";
                 }
             }
             else
@@ -44,6 +46,24 @@ namespace Feedo.Controllers
             
             var products = await query.ToListAsync();
             return View(products);
+        }
+
+        // GET: Products/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = await _context.Products
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
         }
 
         // GET: Products/Create

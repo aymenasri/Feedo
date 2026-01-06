@@ -28,7 +28,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Catalog()
     {
         var products = await _context.Products
-            .Where(p => p.DisplayLocation == ProductDisplayLocation.Default && p.IsAvailable)
+            .Where(p => (p.DisplayLocation == ProductDisplayLocation.Default || p.DisplayLocation == ProductDisplayLocation.MenuPage) && p.IsAvailable)
             .OrderBy(p => p.Name)
             .ToListAsync();
         return View(products);

@@ -3,6 +3,8 @@ using Feedo.Entities;
 using Feedo.Models;
 using Microsoft.EntityFrameworkCore;
 
+using Feedo.Shared;
+
 namespace Feedo.Services
 {
     public interface IOrderService
@@ -86,23 +88,23 @@ namespace Feedo.Services
         {
             var order = await _context.Orders.FindAsync(orderId);
             
-            if (order == null || order.CourierId != null)
+            if (order == null || order.LivreurId != null)
                 return false;
             
             // Find available courier with best rating
-            var availableCourier = await _context.Couriers
-                .Where(c => c.IsAvailable && !c.EstSupprimer)
+            var availableCourier = await _context.Livreurs
+                .Where(c => c.Status == LivreurStatus.Available && !c.EstSupprimer)
                 .OrderByDescending(c => c.Rating)
                 .ThenBy(c => c.TotalDeliveries)
                 .FirstOrDefaultAsync();
             
             if (availableCourier != null)
             {
-                order.CourierId = availableCourier.Id;
+                order.LivreurId = availableCourier.Id;
                 order.Status = OrderStatus.Assigned;
                 order.AssignedAt = DateTime.Now;
                 
-                availableCourier.IsAvailable = false; // Mark as busy
+                availableCourier.Status = LivreurStatus.Busy; // Mark as busy
                 
                 await _context.SaveChangesAsync();
                 return true;
@@ -115,7 +117,7 @@ namespace Feedo.Services
         {
             return await _context.Orders
                 .Include(o => o.Client)
-                .Include(o => o.Courier)
+                .Include(o => o.Livreur)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
@@ -125,7 +127,7 @@ namespace Feedo.Services
         {
             return await _context.Orders
                 .Include(o => o.Client)
-                .Include(o => o.Courier)
+                .Include(o => o.Livreur)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                 .Where(o => o.Status == OrderStatus.Pending || o.Status == OrderStatus.Assigned)
@@ -136,7 +138,7 @@ namespace Feedo.Services
         public async Task<List<Order>> GetOrdersByClientAsync(int clientId)
         {
             return await _context.Orders
-                .Include(o => o.Courier)
+                .Include(o => o.Livreur)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                 .Where(o => o.ClientId == clientId)
@@ -147,7 +149,7 @@ namespace Feedo.Services
         public async Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus newStatus)
         {
             var order = await _context.Orders
-                .Include(o => o.Courier)
+                .Include(o => o.Livreur)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
             
             if (order == null)
@@ -159,11 +161,11 @@ namespace Feedo.Services
             {
                 order.DeliveredAt = DateTime.Now;
                 
-                if (order.Courier != null)
+                if (order.Livreur != null)
                 {
-                    order.Courier.IsAvailable = true;
-                    order.Courier.TotalDeliveries++;
-                    order.Courier.LastDeliveryAt = DateTime.Now;
+                    order.Livreur.Status = LivreurStatus.Available;
+                    order.Livreur.TotalDeliveries++;
+                    order.Livreur.LastDeliveryAt = DateTime.Now;
                 }
             }
             

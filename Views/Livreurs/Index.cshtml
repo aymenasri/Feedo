@@ -1,0 +1,108 @@
+@model IEnumerable<Feedo.Entities.Livreur>
+@using Feedo.Shared
+
+@{
+    ViewData["Title"] = "Courier Management";
+    Layout = "_Layout";
+}
+
+<style>
+    .admin-container {
+        padding: 50px 20px;
+        color: white;
+    }
+    
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+    
+    .status-offline { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.3); }
+    .status-available { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-busy { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .btn-toggle {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+</style>
+
+<div class="container admin-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Couriers</h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Courier
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-dark table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Vehicle</th>
+                    <th>Status</th>
+                    <th>Rating</th>
+                    <th>Deliveries</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model) {
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                             <div class="avatar-circle" style="width:30px;height:30px;background:#333;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                                 @item.Prenom.Substring(0,1)
+                             </div>
+                             @item.Prenom @item.Nom
+                        </div>
+                    </td>
+                    <td>@item.VehicleType <span class="text-muted small">(@item.LicensePlate)</span></td>
+                    <td>
+                        @{
+                            var statusClass = item.Status switch {
+                                LivreurStatus.Available => "status-available",
+                                LivreurStatus.Busy => "status-busy",
+                                _ => "status-offline"
+                            };
+                        }
+                        <span class="status-badge @statusClass" id="status-badge-@item.Id">@item.Status</span>
+                    </td>
+                    <td><i class="fas fa-star text-warning"></i> @item.Rating.ToString("F1")</td>
+                    <td>@item.TotalDeliveries</td>
+                    <td>
+                        <button class="btn-toggle btn-sm me-2" onclick="toggleStatus(@item.Id)">
+                            <i class="fas fa-power-off"></i> Toggle
+                        </button>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary btn-sm"><i class="fas fa-edit"></i></a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function toggleStatus(id) {
+    fetch(`/Livreurs/ToggleStatus/${id}`, { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+            if(data.success) {
+                location.reload(); 
+            }
+        });
+}
+</script>

@@ -1,44 +1,79 @@
 ﻿@model IEnumerable<Feedo.Entities.Client>
 
 @{
-    ViewData["Title"] = "Liste des Clients";
+    ViewData["Title"] = "Gestion des Clients";
+    Layout = "~/Views/Shared/_PurpleLayout.cshtml";
 }
 
-<h1>Gestion des Clients</h1>
+<div class="page-header">
+    <h3 class="page-title">
+        <span class="page-title-icon bg-gradient-primary text-white me-2">
+            <i class="mdi mdi-account-group"></i>
+        </span> Gestion des Clients
+    </h3>
+    <nav aria-label="breadcrumb">
+        <ul class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">
+                <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+            </li>
+        </ul>
+    </nav>
+</div>
 
-<p>
-    <a asp-action="Create" class="btn btn-success">Ajouter un Client</a>
-</p>
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h4 class="card-title">Liste des Clients</h4>
+                        <p class="card-description"> Gérer vos comptes clients </p>
+                    </div>
+                    <a asp-action="Create" class="btn btn-gradient-primary btn-fw">
+                        <i class="mdi mdi-account-plus"></i> Ajouter un Client
+                    </a>
+                </div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Téléphone</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null && Model.Any())
-        {
-            foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.Nom</td>
-                    <td>@item.Prenom</td>
-                    <td>@item.NumeroTelephone</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Modifier</a>
-                    </td>
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="4" class="text-center">Aucun client trouvé.</td>
-            </tr>
-        }
-    </tbody>
-</table>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Téléphone</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@item.Nom</td>
+                                        <td>@item.Prenom</td>
+                                        <td>@item.NumeroTelephone</td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-inverse-info btn-icon-text btn-sm">
+                                                <i class="mdi mdi-pencil btn-icon-prepend"></i> Modifier
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-inverse-danger btn-icon-text btn-sm">
+                                                <i class="mdi mdi-delete btn-icon-prepend"></i> Supprimer
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center">Aucun client trouvé.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

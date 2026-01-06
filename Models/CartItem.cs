@@ -19,13 +19,14 @@ namespace Feedo.Models
         
         public int TotalItems => Items.Sum(i => i.Quantity);
         
-        public void AddItem(int productId, string productName, decimal price, string? imageUrl)
+        public void AddItem(int productId, string productName, decimal price, int quantity, string? imageUrl)
         {
-            var existingItem = Items.FirstOrDefault(i => i.ProductId == productId);
+            // Check by ProductId AND ProductName to allow distinct items with different extras
+            var existingItem = Items.FirstOrDefault(i => i.ProductId == productId && i.ProductName == productName);
             
             if (existingItem != null)
             {
-                existingItem.Quantity++;
+                existingItem.Quantity += quantity;
             }
             else
             {
@@ -34,7 +35,7 @@ namespace Feedo.Models
                     ProductId = productId,
                     ProductName = productName,
                     Price = price,
-                    Quantity = 1,
+                    Quantity = quantity,
                     ImageUrl = imageUrl
                 });
             }

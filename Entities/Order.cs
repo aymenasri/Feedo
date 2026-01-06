@@ -11,10 +11,10 @@ namespace Feedo.Entities
         [ForeignKey("ClientId")]
         public virtual Client? Client { get; set; }
         
-        public int? CourierId { get; set; }
+        public int? LivreurId { get; set; }
         
-        [ForeignKey("CourierId")]
-        public virtual Courier? Courier { get; set; }
+        [ForeignKey("LivreurId")]
+        public virtual Livreur? Livreur { get; set; }
         
         [Required]
         public OrderStatus Status { get; set; } = OrderStatus.Pending;

@@ -35,5 +35,16 @@ namespace Feedo.Models
         [Display(Name = "Confirmer le mot de passe")]
         [Compare("Password", ErrorMessage = "Les mots de passe ne correspondent pas")]
         public string ConfirmPassword { get; set; } = string.Empty;
+
+        [Required]
+        [Display(Name = "Je suis un")]
+        public string Role { get; set; } = "Client"; // Client, Livreur
+
+        // Livreur Specific Fields
+        [Display(Name = "Type de Véhicule")]
+        public string? VehicleType { get; set; } // Bike, Scooter, Car
+
+        [Display(Name = "Plaque d'immatriculation")]
+        public string? LicensePlate { get; set; }
     }
 }

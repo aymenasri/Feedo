@@ -138,6 +138,41 @@
                 <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
             </div>
 
+            <div class="mb-4">
+                <label class="form-label d-block">Je veux devenir :</label>
+                <div class="btn-group w-100" role="group">
+                    <input type="radio" class="btn-check" name="Role" id="roleClient" value="Client" autocomplete="off" checked onchange="toggleRole()">
+                    <label class="btn btn-outline-danger" for="roleClient">
+                        <i class="fas fa-user mb-1 d-block" style="font-size: 1.2rem;"></i>
+                        Client
+                    </label>
+
+                    <input type="radio" class="btn-check" name="Role" id="roleLivreur" value="Livreur" autocomplete="off" onchange="toggleRole()">
+                    <label class="btn btn-outline-danger" for="roleLivreur">
+                        <i class="fas fa-motorcycle mb-1 d-block" style="font-size: 1.2rem;"></i>
+                        Livreur
+                    </label>
+                </div>
+            </div>
+
+            <div id="livreur-fields" style="display: none; background: #f9fafb; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <h6 class="text-danger mb-3"><i class="fas fa-info-circle"></i> Infos Véhicule</h6>
+                
+                <div class="mb-3">
+                    <label asp-for="VehicleType" class="form-label"></label>
+                    <select asp-for="VehicleType" class="form-control">
+                        <option value="Bike">Vélo 🚲</option>
+                        <option value="Scooter">Scooter 🛵</option>
+                        <option value="Car">Voiture 🚗</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="LicensePlate" class="form-label"></label>
+                    <input asp-for="LicensePlate" class="form-control" placeholder="AB-123-CD" />
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-register">
                 Créer mon compte
             </button>
@@ -146,6 +181,18 @@
                 Vous avez déjà un compte? <a asp-action="Login" asp-controller="Account">Se connecter</a>
             </div>
         </form>
+
+        <script>
+            function toggleRole() {
+                var isLivreur = document.getElementById('roleLivreur').checked;
+                var fields = document.getElementById('livreur-fields');
+                if (isLivreur) {
+                    fields.style.display = 'block';
+                } else {
+                    fields.style.display = 'none';
+                }
+            }
+        </script>
     </div>
 </div>
 

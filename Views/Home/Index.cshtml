@@ -673,6 +673,323 @@
             font-size: 1.5rem;
         }
     }
+        .hero-price-new {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* --- PREMIUM UX/UI SECTIONS STYLES --- */
+
+    .section-title-premium {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 3.5rem;
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+        display: inline-block;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .section-title-premium::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 4px;
+        background: #dc2626;
+        margin: 0.5rem auto 0;
+        border-radius: 2px;
+    }
+
+    /* How It Works - Black Contrast */
+    .steps-section {
+        padding: 6rem 0;
+        background: #000000;
+        position: relative;
+        z-index: 1;
+    }
+    .step-card {
+        text-align: center;
+        padding: 2rem;
+    }
+    .step-icon-wrapper {
+        width: 90px;
+        height: 90px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .step-card:hover .step-icon-wrapper {
+        background: rgba(220, 38, 38, 0.15);
+        border-color: #dc2626;
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 0 30px rgba(220, 38, 38, 0.2);
+    }
+    .step-icon {
+        font-size: 2.2rem;
+        color: #e5e5e5;
+    }
+    .step-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+        letter-spacing: 1px;
+    }
+    .step-desc {
+        color: #9ca3af;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    /* Mobile App Section - Radiant Depth & Broken Grid */
+    .app-section {
+        background: radial-gradient(circle at 30% 50%, #2a0a0a 0%, #000000 70%);
+        padding: 8rem 0;
+        border-top: 1px solid #1a1a1a;
+        border-bottom: 1px solid #1a1a1a;
+        overflow: visible; /* Essential for Break the Grid */
+        position: relative;
+        z-index: 2;
+    }
+    .app-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 5rem;
+    }
+    .app-visual {
+        flex: 1;
+        position: relative;
+        z-index: 10;
+        display: flex;
+        justify-content: center;
+    }
+    .app-visual img {
+        width: 130%;
+        max-width: 750px;
+        margin-top: -80px; /* Break grid top */
+        margin-bottom: -80px; /* Break grid bottom */
+        transform: rotate(-8deg);
+        filter: drop-shadow(0 30px 60px rgba(0,0,0,0.7));
+        transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .app-visual:hover img {
+        transform: rotate(-2deg) scale(1.05);
+    }
+    .app-text {
+        flex: 1;
+    }
+    .app-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 4.5rem;
+        line-height: 0.9;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .app-buttons {
+        display: flex;
+        gap: 1.2rem;
+        margin-top: 2.5rem;
+    }
+    .btn-store {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 14px;
+        padding: 1rem 1.8rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    .btn-store:hover {
+        background: #fff;
+        color: #000;
+        transform: translateY(-4px);
+        box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+        border-color: #fff;
+    }
+    .store-icon {
+        font-size: 2.2rem;
+    }
+    .store-text small {
+        display: block;
+        font-size: 0.75rem;
+        opacity: 0.8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .store-text span {
+        font-weight: 800;
+        font-size: 1.2rem;
+    }
+
+    /* Testimonials - Human & Glow */
+    .testimonials-section {
+        padding: 8rem 0 6rem;
+        background: #050505;
+        position: relative;
+        z-index: 1;
+    }
+    .testimonial-card {
+        background: #111;
+        border: 1px solid #222;
+        padding: 2.5rem;
+        border-radius: 24px;
+        height: 100%;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .testimonial-card::before {
+        content: '"';
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 8rem;
+        color: rgba(255,255,255,0.03);
+        line-height: 1;
+    }
+    .testimonial-card:hover {
+        border-color: #dc2626;
+        box-shadow: 0 15px 40px rgba(220, 38, 38, 0.15);
+        transform: translateY(-8px);
+        background: #161616;
+    }
+    .stars {
+        color: #FFC107;
+        margin-bottom: 1.5rem;
+        font-size: 1.2rem;
+        text-shadow: 0 0 12px rgba(255, 193, 7, 0.6); /* Glowing Stars */
+    }
+    .testimonial-text {
+        font-style: italic;
+        color: #e5e5e5;
+        font-weight: 300;
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        font-size: 1.05rem;
+    }
+    .client-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border-top: 1px solid #222;
+        padding-top: 1.5rem;
+    }
+    .client-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #333;
+        transition: border-color 0.3s;
+    }
+    .testimonial-card:hover .client-avatar {
+        border-color: #dc2626;
+    }
+    .client-name {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #fff;
+    }
+
+    /* Newsletter Footer */
+    .newsletter-section {
+        background: linear-gradient(135deg, #111 0%, #080808 100%);
+        padding: 6rem 0;
+        border-top: 1px solid #222;
+        text-align: center;
+    }
+    .newsletter-container {
+        max-width: 650px;
+        margin: 0 auto;
+    }
+    .newsletter-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        letter-spacing: 1px;
+    }
+    .newsletter-form {
+        position: relative;
+        margin-top: 2.5rem;
+    }
+    .newsletter-input {
+        width: 100%;
+        padding: 1.3rem 2.5rem;
+        background: #161616;
+        border: 1px solid #333;
+        border-radius: 60px;
+        color: white;
+        font-size: 1.1rem;
+        outline: none;
+        transition: all 0.3s;
+    }
+    .newsletter-input:focus {
+        border-color: #dc2626;
+        background: #1a1a1a;
+        box-shadow: 0 0 20px rgba(220, 38, 38, 0.1);
+    }
+    .newsletter-btn {
+        position: absolute;
+        right: 6px;
+        top: 6px;
+        bottom: 6px;
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        color: white;
+        border: none;
+        border-radius: 60px;
+        padding: 0 2.5rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        transition: all 0.3s;
+        box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3);
+    }
+    .newsletter-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px rgba(220, 38, 38, 0.6);
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    
+    @@media (max-width: 768px) {
+        .app-section {
+            padding: 4rem 0;
+        }
+        .app-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 2rem;
+        }
+        .app-visual img {
+            width: 100%;
+            margin: 0;
+            transform: rotate(0);
+        }
+        .app-title {
+            font-size: 3rem;
+        }
+        .app-buttons {
+            justify-content: center;
+        }
+        .newsletter-btn {
+            position: static;
+            width: 100%;
+            margin-top: 1rem;
+            padding: 1rem;
+        }
+        .section-title-premium {
+            font-size: 2.5rem;
+        }
+    }
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -957,265 +1274,130 @@
     </div>
 </section>
 
-<!-- Promo Cards Grid -->
-<section class="container mb-5">
-    <div class="row g-4">
-        <!-- Promo Card 1 - Burger -->
-        <div class="col-md-6 col-lg-4">
-            <div class="promo-card animate-in interactive-card">
-                <div class="promo-card-image">
-                    <img src="~/images/burger-promo.png" alt="Burger Deluxe">
-                    <div class="promo-card-badge">-30%</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-red mb-2">Burger Deluxe</h3>
-                    <p class="text-light-gray mb-3">Burger juteux avec sauce spéciale maison</p>
-                    <div class="promo-price-display mb-3">
-                        <span class="price-old">€12.99</span>
-                        <span class="price-new">€8.99</span>
+    <!-- 1. How It Works Section -->
+    <!-- 1. How It Works Section -->
+    <div class="steps-section animate-in">
+        <div class="container">
+            <h2 class="section-title-premium text-white">COMMENT ÇA MARCHE</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-icon-wrapper">
+                            <i class="fas fa-utensils step-icon"></i>
+                        </div>
+                        <h3 class="step-title">1. Choisissez</h3>
+                        <p class="step-desc">Explorez notre menu gourmet et sélectionnez vos plats préférés.</p>
                     </div>
-                    <button class="btn-red w-100 interactive-element">Commander</button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Promo Card 2 - Pizza -->
-        <div class="col-md-6 col-lg-4">
-            <div class="promo-card animate-in interactive-card">
-                <div class="promo-card-image">
-                    <img src="~/images/pizza-promo.png" alt="Pizza Royale">
-                    <div class="promo-card-badge">-25%</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-red mb-2">Pizza Royale</h3>
-                    <p class="text-light-gray mb-3">Pizza 4 fromages fondants</p>
-                    <div class="promo-price-display mb-3">
-                        <span class="price-old">€15.99</span>
-                        <span class="price-new">€11.99</span>
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-icon-wrapper">
+                            <i class="fas fa-fire-burner step-icon"></i>
+                        </div>
+                        <h3 class="step-title">2. Préparation</h3>
+                        <p class="step-desc">Nos chefs experts préparent votre commande avec des ingrédients frais.</p>
                     </div>
-                    <button class="btn-red w-100 interactive-element">Commander</button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Promo Card 3 - Pasta -->
-        <div class="col-md-6 col-lg-4">
-            <div class="promo-card animate-in interactive-card">
-                <div class="promo-card-image">
-                    <img src="~/images/pasta-promo.png" alt="Pasta Carbonara">
-                    <div class="promo-card-badge">-20%</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-red mb-2">Pasta Carbonara</h3>
-                    <p class="text-light-gray mb-3">Pâtes crémeuses authentiques</p>
-                    <div class="promo-price-display mb-3">
-                        <span class="price-old">€10.99</span>
-                        <span class="price-new">€8.79</span>
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-icon-wrapper">
+                            <i class="fas fa-motorcycle step-icon"></i>
+                        </div>
+                        <h3 class="step-title">3. Livraison Express</h3>
+                        <p class="step-desc">Livraison ultra-rapide en moins de 30 minutes à votre porte.</p>
                     </div>
-                    <button class="btn-red w-100 interactive-element">Commander</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Promo Card 4 - Sandwich -->
-        <div class="col-md-6 col-lg-4">
-            <div class="promo-card animate-in interactive-card">
-                <div class="promo-card-image">
-                    <img src="~/images/sandwich-promo.png" alt="Sandwich Gourmet">
-                    <div class="promo-card-badge">-35%</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-red mb-2">Sandwich Gourmet</h3>
-                    <p class="text-light-gray mb-3">Sandwich club gourmand</p>
-                    <div class="promo-price-display mb-3">
-                        <span class="price-old">€9.99</span>
-                        <span class="price-new">€6.49</span>
-                    </div>
-                    <button class="btn-red w-100 interactive-element">Commander</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Promo Card 5 - Tacos -->
-        <div class="col-md-6 col-lg-4">
-            <div class="promo-card animate-in interactive-card">
-                <div class="promo-card-image">
-                    <img src="~/images/tacos-promo.png" alt="Tacos Mexicain">
-                    <div class="promo-card-badge">-25%</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-red mb-2">Tacos Mexicain</h3>
-                    <p class="text-light-gray mb-3">Tacos garnis à la viande épicée</p>
-                    <div class="promo-price-display mb-3">
-                        <span class="price-old">€11.99</span>
-                        <span class="price-new">€8.99</span>
-                    </div>
-                    <button class="btn-red w-100 interactive-element">Commander</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Promo Card 6 - Sushi -->
-        <div class="col-md-6 col-lg-4">
-            <div class="promo-card animate-in interactive-card">
-                <div class="promo-card-image">
-                    <img src="~/images/sushi-promo.png" alt="Sushi Mix">
-                    <div class="promo-card-badge">-40%</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-red mb-2">Sushi Mix</h3>
-                    <p class="text-light-gray mb-3">Assortiment de sushis frais</p>
-                    <div class="promo-price-display mb-3">
-                        <span class="price-old">€19.99</span>
-                        <span class="price-new">€11.99</span>
-                    </div>
-                    <button class="btn-red w-100 interactive-element">Commander</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Promo Card 7 - Salad -->
-        <div class="col-md-6 col-lg-4">
-            <div class="promo-card animate-in interactive-card">
-                <div class="promo-card-image">
-                    <img src="~/images/salad-promo.png" alt="Salade Fraîcheur">
-                    <div class="promo-card-badge">-15%</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-red mb-2">Salade Fraîcheur</h3>
-                    <p class="text-light-gray mb-3">Salade composée bio</p>
-                    <div class="promo-price-display mb-3">
-                        <span class="price-old">€8.99</span>
-                        <span class="price-new">€7.64</span>
-                    </div>
-                    <button class="btn-red w-100 interactive-element">Commander</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Promo Card 8 - Dessert -->
-        <div class="col-md-6 col-lg-4">
-            <div class="promo-card animate-in interactive-card">
-                <div class="promo-card-image">
-                    <img src="~/images/dessert-promo.png" alt="Chocolat Délice">
-                    <div class="promo-card-badge">-30%</div>
-                </div>
-                <div class="p-4">
-                    <h3 class="text-red mb-2">Chocolat Délice</h3>
-                    <p class="text-light-gray mb-3">Fondant au chocolat gourmand</p>
-                    <div class="promo-price-display mb-3">
-                        <span class="price-old">€6.99</span>
-                        <span class="price-new">€4.89</span>
-                    </div>
-                    <button class="btn-red w-100 interactive-element">Commander</button>
                 </div>
             </div>
         </div>
     </div>
-</section>
 
-<!-- Features Section -->
-<div class="container">
-    <section class="features-section">
-        <div class="row text-center mb-5">
-            <div class="col-12">
-                <h2 style="color: #dc2626; font-weight: bold;">Fonctionnalités Principales</h2>
-                <p style="color: #6b7280;">Tout ce dont vous avez besoin pour gérer votre activité</p>
-            </div>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        👥
-                    </div>
-                    <h3 class="text-center">Gestion des Clients</h3>
-                    <p class="text-center">
-                        Gérez facilement votre base de clients avec notre interface intuitive.
-                        Ajoutez, modifiez et supprimez des clients en quelques clics.
-                    </p>
+    <!-- 2. Mobile App Section -->
+    <div class="app-section animate-in">
+        <div class="container">
+            <div class="app-content">
+                <div class="app-visual">
+                    <img src="~/images/mobile-app-mockup.png" alt="Feedo App Interface">
                 </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        🍕
-                    </div>
-                    <h3 class="text-center">Catalogue Produits</h3>
-                    <p class="text-center">
-                        Organisez votre menu avec des catégories, prix et descriptions détaillées.
-                        Mettez à jour votre catalogue en temps réel.
+                <div class="app-text">
+                    <h2 class="app-title">Feedo dans<br><span class="text-white">Votre Poche</span></h2>
+                    <p class="text-light-gray mb-4" style="font-size: 1.2rem; max-width: 500px;">
+                        Commandez plus vite, suivez votre livreur en temps réel et profitez d'offres exclusives uniquement sur l'application.
                     </p>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        📦
+                    <div class="app-buttons">
+                        <a href="#" class="btn-store">
+                            <i class="fab fa-apple store-icon"></i>
+                            <div class="store-text">
+                                <small>Download on the</small>
+                                <span>App Store</span>
+                            </div>
+                        </a>
+                        <a href="#" class="btn-store">
+                            <i class="fab fa-google-play store-icon"></i>
+                            <div class="store-text">
+                                <small>Get it on</small>
+                                <span>Google Play</span>
+                            </div>
+                        </a>
                     </div>
-                    <h3 class="text-center">Suivi des Commandes</h3>
-                    <p class="text-center">
-                        Suivez l'état de vos commandes depuis la création jusqu'à la livraison.
-                        Système de notification en temps réel.
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        📊
-                    </div>
-                    <h3 class="text-center">Statistiques</h3>
-                    <p class="text-center">
-                        Visualisez vos performances avec des tableaux de bord détaillés.
-                        Prenez de meilleures décisions basées sur les données.
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        🚚
-                    </div>
-                    <h3 class="text-center">Gestion Livreurs</h3>
-                    <p class="text-center">
-                        Assignez les commandes aux livreurs disponibles.
-                        Optimisez vos itinéraires de livraison.
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        💳
-                    </div>
-                    <h3 class="text-center">Paiements Sécurisés</h3>
-                    <p class="text-center">
-                        Acceptez les paiements en toute sécurité.
-                        Support multi-méthodes de paiement.
-                    </p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Call to Action -->
-    <section class="text-center py-5">
-        <h2 style="color: #dc2626; font-weight: bold; margin-bottom: 1.5rem;">
-            Prêt à commencer ?
-        </h2>
-        <p class="lead mb-4" style="color: #6b7280;">
-            Découvrez toutes les fonctionnalités de Feedo dès maintenant
-        </p>
-        <a asp-controller="Clients" asp-action="Index" class="btn btn-lg" 
-           style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; padding: 1rem 3rem; border-radius: 50px; font-weight: 600;">
-            Commencer
-        </a>
-    </section>
-</div>
+    <!-- 3. Testimonials Section -->
+    <div class="testimonials-section animate-in">
+        <div class="container">
+            <h2 class="section-title-premium text-white">ILS NOUS ADORENT</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card">
+                        <div class="stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"La qualité des burgers est incroyable. Vraiment au-dessus de tout ce que j'ai pu goûter en livraison !"</p>
+                        <div class="client-info">
+                            <img src="~/images/avatar-sophie.png" alt="Sophie Martin" class="client-avatar">
+                            <div class="client-name">Sophie Martin</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card">
+                        <div class="stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"Livraison ultra rapide comme promis. Le plat est arrivé chaud et la présentation était parfaite."</p>
+                        <div class="client-info">
+                            <img src="~/images/avatar-thomas.png" alt="Thomas Dubois" class="client-avatar">
+                            <div class="client-name">Thomas Dubois</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card">
+                        <div class="stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"L'interface de l'app est super fluide et les promos sont vraiment intéressantes. Je recommande à 100%."</p>
+                        <div class="client-info">
+                             <img src="~/images/avatar-lea.png" alt="Léa Bernard" class="client-avatar">
+                            <div class="client-name">Léa Bernard</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Newsletter Footer -->
+    <div class="newsletter-section animate-in">
+        <div class="container newsletter-container">
+            <h2 class="newsletter-title">CODES PROMOS <span class="text-red">SECRETS</span></h2>
+            <p class="text-light-gray">Inscrivez-vous pour recevoir nos offres exclusives et -20% sur votre première commande.</p>
+            <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Merci de votre inscription !');">
+                <input type="email" class="newsletter-input" placeholder="Votre adresse email..." required>
+                <button type="submit" class="newsletter-btn">S'abonner</button>
+            </form>
+        </div>
+    </div>
+
